@@ -23,17 +23,17 @@ namespace DDG
       if( fragmentShader ) glDeleteShader( fragmentShader );
       if( geometryShader ) glDeleteShader( geometryShader );
    }
-   
+
    void Shader::loadVertex( const char* filename )
    {
       load( GL_VERTEX_SHADER, filename, vertexShader );
    }
-   
+
    void Shader::loadFragment( const char* filename )
    {
       load( GL_FRAGMENT_SHADER, filename, fragmentShader );
    }
-   
+
    void Shader::loadGeometry( const char* filename )
    {
 #ifdef GL_GEOMETRY_SHADER_EXT
@@ -42,7 +42,7 @@ namespace DDG
       cerr << "Error: geometry shaders not supported!" << endl;
 #endif
    }
-   
+
    void Shader::enable( void )
    {
       if( !linked )
@@ -50,25 +50,25 @@ namespace DDG
          glLinkProgram( program );
          linked = true;
       }
-   
+
       glUseProgram( program );
    }
-   
+
    void Shader::disable( void ) const
    {
       glUseProgram( 0 );
    }
-   
+
    Shader::operator GLuint( void ) const
    {
       return program;
    }
-   
+
    void Shader::load( GLenum shaderType, const char* filename, GLuint& shader )
    // read vertex shader from GLSL source file, compile, and attach to program
    {
       string source;
-      
+
       if( !readSource( filename, source ))
       {
          return;
@@ -78,20 +78,20 @@ namespace DDG
       {
          program = glCreateProgram();
       }
-   
+
       if( shader != 0 )
       {
          glDetachShader( program, shader );
       }
-   
+
       shader = glCreateShader( shaderType );
       const char* source_c_str = source.c_str();
       glShaderSource( shader, 1, &(source_c_str), NULL );
-   
+
       glCompileShader( shader );
       GLint compileStatus;
       glGetShaderiv( shader, GL_COMPILE_STATUS, &compileStatus );
-   
+
       if( compileStatus == GL_TRUE )
       {
          glAttachShader( program, shader );
@@ -101,16 +101,16 @@ namespace DDG
       {
          GLsizei maxLength = 0;
          glGetShaderiv( shader, GL_INFO_LOG_LENGTH, &maxLength );
-   
+
          if( maxLength > 0 )
          {
             GLchar* infoLog = new char[ maxLength ];
             GLsizei length;
-   
+
             glGetShaderInfoLog( shader, maxLength, &length, infoLog );
-   
+
             cerr << "GLSL Error: " << infoLog << endl;
-   
+
             delete[] infoLog;
          }
       }
@@ -133,7 +133,7 @@ namespace DDG
       string line;
       while( getline( in, line ))
       {
-         source += line;
+         source += line + "\n";
       }
 
       return true;

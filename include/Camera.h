@@ -11,15 +11,8 @@
 
 #include "Quaternion.h"
 
-#ifdef __CYGWIN__
-#define GLUT_DISABLE_ATEXIT_HACK
-#include <windows.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
+#include <glad/glad.h>
 #include <GL/glut.h>
-#else
-#include <GLUT/glut.h>
-#endif
 
 namespace DDG
 {
@@ -31,22 +24,22 @@ namespace DDG
 
          Quaternion clickToSphere( int x, int y );
          // projects a mous click onto the unit sphere
-         
+
          void setView( void ) const;
          // applies the camera transformation to the OpenGL modelview stack
-         
+
          void mouse( int button, int state, int x, int y );
          // handles mouse clicks
-         
+
          void motion( int x, int y );
          // handles mouse drags
-         
+
          void idle( void );
          // handles camera momentum
-         
+
          void zoomIn( void );
          // moves viewer toward object
-         
+
          void zoomOut( void );
          // moves viewer away from object
 
@@ -55,28 +48,28 @@ namespace DDG
          void moveLeft( void );
          void moveRight( void );
          // translate in image plane
-         
+
          Quaternion currentRotation( void ) const;
          // returns the rotation corresponding to the current mouse state
 
          Quaternion pClick;
          // mouse coordinates of current click
-         
+
          Quaternion pDrag;
          // mouse coordinates of current drag
-         
+
          Quaternion pLast;
          // mouse coordinates of previous drag
-         
+
          Quaternion rLast;
          // previous camera rotation
-         
+
          Quaternion momentum;
          // camera momentum
-         
+
          int tLast;
          // time of previous drag
-         
+
          double zoom, vZoom;
          // zoom and zoom velocity
 

@@ -10,7 +10,8 @@
 #ifndef DDG_VIEWER_H
 #define DDG_VIEWER_H
 
-#include <GLUT/glut.h>
+#include <glad/glad.h>
+#include <GL/glut.h>
 #include "Mesh.h"
 #include "Camera.h"
 #include "Shader.h"
@@ -42,7 +43,7 @@ namespace DDG
          static void drawIsolatedVertices( void );
          static void drawDirectionField( void );
          static void drawFieldSingularities( void );
-         
+
          // GLUT callbacks
          static void display( void );
          static void idle( void );
@@ -52,7 +53,7 @@ namespace DDG
          static void motion( int x, int y );
          static void menu( int value );
          static void view( int value );
-         
+
          // menu functions
          static void mProcess( void );
          static void mResetMesh( void );
@@ -103,7 +104,7 @@ namespace DDG
 
          static GLuint surfaceDL;
          // display list for mesh
-         
+
          static Shader smoothShader, stripeShader;
          // stripeShader used to determine appearance of surface
 

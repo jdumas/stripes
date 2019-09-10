@@ -33,7 +33,7 @@ namespace DDG
    int Viewer::pickIndex = -1;
    bool Viewer::doneSolved = false;
    bool Viewer::isTrivialSection = false;
-   
+
    void Viewer :: init( void )
    {
       restoreViewerState();
@@ -51,18 +51,24 @@ namespace DDG
    {
       glClearColor( 1., 1., 1., 1. );
    }
-   
+
    void Viewer :: initGLUT( void )
    {
       int argc = 0;
       vector< vector<char> > argv(1);
-   
+
+      if(gladLoadGL()) {
+         // you need an OpenGL context before loading glad
+         printf("I did load GL with no context!\n");
+         exit(-1);
+      }
+
       // initialize window
       glutInitWindowSize( windowSize[0], windowSize[1] );
       glutInitDisplayMode( GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH );
       glutInit( &argc, (char**)&argv );
       glutCreateWindow( "StripePatterns" );
-   
+
       // specify callbacks
       glutDisplayFunc  ( Viewer::display  );
       glutIdleFunc     ( Viewer::idle     );
@@ -70,7 +76,7 @@ namespace DDG
       glutSpecialFunc  ( Viewer::special  );
       glutMouseFunc    ( Viewer::mouse    );
       glutMotionFunc   ( Viewer::motion   );
-   
+
       // initialize menus
       int viewMenu = glutCreateMenu( Viewer::view );
       glutSetMenu( viewMenu );
@@ -89,17 +95,22 @@ namespace DDG
       glutAddMenuEntry( "[esc] Exit",           menuExit       );
       glutAddSubMenu( "View", viewMenu );
       glutAttachMenu( GLUT_RIGHT_BUTTON );
+
+      if(!gladLoadGL()) {
+         printf("Something went wrong!\n");
+         exit(-1);
+      }
    }
 
    void Viewer :: initGLSL( void )
    {
-      smoothShader.loadVertex( "shaders/vertex.glsl" );
-      smoothShader.loadFragment( "shaders/smooth.glsl" );
+      smoothShader.loadVertex( SHADER_FOLDER "vertex.glsl" );
+      smoothShader.loadFragment( SHADER_FOLDER "smooth.glsl" );
 
-      stripeShader.loadVertex( "shaders/vertex.glsl" );
-      stripeShader.loadFragment( "shaders/stripe.glsl" );
+      stripeShader.loadVertex( SHADER_FOLDER "vertex.glsl" );
+      stripeShader.loadFragment( SHADER_FOLDER "stripe.glsl" );
    }
-   
+
    void Viewer :: menu( int value )
    {
       switch( value )
@@ -126,7 +137,7 @@ namespace DDG
             break;
       }
    }
-   
+
    void Viewer :: view( int value )
    {
       switch( value )
@@ -147,38 +158,38 @@ namespace DDG
             break;
       }
    }
-   
+
    void Viewer :: mProcess( void )
    {
       updateStripePattern();
       updateDisplayList();
    }
-   
+
    void Viewer :: mResetMesh( void )
    {
       mesh.reload();
       doneSolved = false;
       updateDisplayList();
    }
-   
+
    void Viewer :: mWriteMesh( void )
    {
       mesh.write( "output.obj" );
       //writeSingularities();
    }
-   
+
    void Viewer :: mExit( void )
    {
       storeViewerState();
       exit( 0 );
    }
-   
+
    void Viewer :: mSmoothShaded( void )
    {
       mode = renderShaded;
       updateDisplayList();
    }
-   
+
    void Viewer :: mWireframe( void )
    {
       mode = renderWireframe;
@@ -198,24 +209,24 @@ namespace DDG
    void Viewer :: mScreenshot( void )
    {
       static int index = 0;
-   
+
       // get window width and height
       GLint view[4];
       glGetIntegerv( GL_VIEWPORT, view );
       int w = view[2];
       int h = view[3];
-   
+
       // get pixels
       Image image( w, h );
       glReadPixels( 0, 0, w, h, GL_BGR, GL_FLOAT, &image(0,0) );
-   
+
       stringstream filename;
       filename << "frames/viewer" << setw(8) << setfill( '0' ) << index << ".tga";
       image.write( filename.str().c_str() );
-   
+
       index++;
    }
-   
+
    void Viewer :: keyboard( unsigned char c, int x, int y )
    {
       switch( c )
@@ -293,7 +304,7 @@ namespace DDG
    {
       double theta = .25*M_PI/360.;
       Complex r( cos(theta), sin(theta) );
-      
+
       for( VertexIter v = mesh.vertices.begin(); v != mesh.vertices.end(); v++ )
       {
          v->directionField *= r;
@@ -345,15 +356,15 @@ namespace DDG
             break;
       }
    }
-   
+
    void Viewer :: display( void )
    {
       glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-   
+
       glMatrixMode( GL_PROJECTION );
       glLoadIdentity();
-   
+
       GLint viewport[4];
       glGetIntegerv( GL_VIEWPORT, viewport );
       double aspect = (double) viewport[2] / (double) viewport[3];
@@ -361,7 +372,7 @@ namespace DDG
       const double clipFar = 10000.;
 
       gluPerspective( 45., aspect, clipNear, clipFar );
-   
+
       glMatrixMode( GL_MODELVIEW );
       glLoadIdentity();
 
@@ -408,7 +419,7 @@ namespace DDG
       camera.setView();
 
       stripeShader.enable();
-   
+
       if( !doPick )
       {
          drawSurface();
@@ -421,7 +432,7 @@ namespace DDG
       {
          pick();
       }
-   
+
    }
 
    void Viewer :: drawSurface( void )
@@ -430,13 +441,13 @@ namespace DDG
 
       glEnable( GL_DEPTH_TEST );
       glEnable( GL_LIGHTING );
-   
+
       glCallList( surfaceDL );
       drawSelection();
-   
+
       glPopAttrib();
    }
-   
+
    void Viewer :: drawMesh( void )
    {
       glPushAttrib( GL_ALL_ATTRIB_BITS );
@@ -454,9 +465,9 @@ namespace DDG
       smoothShader.enable();
       drawFieldSingularities();
       smoothShader.disable();
-   
+
       glDisable( GL_POLYGON_OFFSET_FILL );
-   
+
       if( mode == renderWireframe )
       {
          stripeShader.disable();
@@ -513,7 +524,7 @@ namespace DDG
                   glTexCoord4d( g.re, g.im, nu, nv );
                   glMultiTexCoord3d( GL_TEXTURE1, i==0, i==1, i==2 );
                   glMultiTexCoord2dv( GL_TEXTURE3, &he->vertex->parameterization.re );
-                  
+
                   Vector p = he->vertex->position;
                   glVertex3dv( &p[0] );
 
@@ -565,7 +576,7 @@ namespace DDG
             // SIMPLER // }
             // Otherwise we're ok, because the original value was computed
             // starting at k, which is exactly where we want to start anyway.
-            
+
             // Now we just get consecutive values along the curve from i to j to k to l.
             // (The following logic was already described in our routine for finding
             // zeros of the parameterization.)
@@ -575,7 +586,7 @@ namespace DDG
                omegaIJ =  cIJ * omegaIJ;
                omegaJK = -cJK * omegaJK;
             }
-            
+
             // Note that the flag hkl->crossesSheets() is the opposite of what we want here:
             // based on the way it was originally computed, it flags whether the vectors at
             // Xk and Xi have a negative dot product.  But here, we instead want to know if
@@ -625,7 +636,7 @@ namespace DDG
             glNormal3dv( &Nj.x ); glMultiTexCoord3d( GL_TEXTURE1, 0., 1., 0. ); glTexCoord4d( betaJ, 0., 0., 0. ); glVertex3dv( &pj.x );
             glNormal3dv( &Nk.x ); glMultiTexCoord3d( GL_TEXTURE1, 0., 0., 1. ); glTexCoord4d( betaK, 0., 0., 0. ); glVertex3dv( &pk.x );
             glNormal3dv( &Nm.x ); glMultiTexCoord3d( GL_TEXTURE1, 0., 0., 0. ); glTexCoord4d( betaM, 0., 0., 0. ); glVertex3dv( &pm.x );
-            
+
             glNormal3dv( &Nk.x ); glMultiTexCoord3d( GL_TEXTURE1, 0., 0., 1. ); glTexCoord4d( betaK, 0., 0., 0. ); glVertex3dv( &pk.x );
             glNormal3dv( &Ni.x ); glMultiTexCoord3d( GL_TEXTURE1, 1., 0., 0. ); glTexCoord4d( betaL, 0., 0., 0. ); glVertex3dv( &pi.x );
             glNormal3dv( &Nm.x ); glMultiTexCoord3d( GL_TEXTURE1, 0., 0., 0. ); glTexCoord4d( betaM, 0., 0., 0. ); glVertex3dv( &pm.x );
@@ -750,7 +761,7 @@ namespace DDG
          {
             if( n < 0. ) glColor3f( 0., 0., 1. );
             if( n > 0. ) glColor3f( 1., 0., 0. );
-            
+
             Vector b = f->barycenter();
             const double radius = .02;
             const double slices = 24;
@@ -791,7 +802,7 @@ namespace DDG
 
       glPopAttrib();
    }
-   
+
    void Viewer :: updateDisplayList( void )
    {
       if( surfaceDL )
@@ -799,14 +810,14 @@ namespace DDG
          glDeleteLists( surfaceDL, 1 );
          surfaceDL = 0;
       }
-   
+
       surfaceDL = glGenLists( 1 );
-   
+
       glNewList( surfaceDL, GL_COMPILE );
       drawMesh();
       glEndList();
    }
-   
+
    void Viewer :: mouse( int button, int state, int x, int y )
    {
       camera.mouse( button, state, x, y );
@@ -824,7 +835,7 @@ namespace DDG
    {
       camera.motion( x, y );
    }
-   
+
    void Viewer :: idle( void )
    {
       camera.idle();
@@ -886,7 +897,7 @@ namespace DDG
       // mesh.extractSingularities();
       // mesh.computeTrivialSection();
       // mesh.alignTrivialSection();
-      
+
       mesh.parameterize();
 
       cerr << "Drawing mesh..." << endl;
@@ -909,7 +920,7 @@ namespace DDG
          glDeleteTextures( 1, &texture );
          texture = 0;
       }
-      
+
       glGenTextures( 1, &texture );
       glBindTexture( GL_TEXTURE_2D, texture );
       glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR );
@@ -1043,7 +1054,7 @@ namespace DDG
          Ia = 0.;
          Ib = 0.;
       }
-      
+
       // if one face is singular and the other is not, just move the singularity
       else if( (Ia == 0. && Ib != 0.) || (Ia != 0. && Ib == 0.) )
       {
