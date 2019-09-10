@@ -41,7 +41,7 @@ namespace DDG
       initGL();
       initGLSL();
 #ifndef SP_COMPILE_COMMAND_LINE
-      mesh.read( "../../../input.obj" );
+      mesh.read( DATA_FOLDER "bunny.obj" );
 #endif
       updateDisplayList();
       glutMainLoop();

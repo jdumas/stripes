@@ -47,10 +47,10 @@ Running
 To run the code from the command line, type
 
    ```
-   ./stripe input.obj
+   ./StripePatterns input.obj
    ```
 
-where “input.obj” is a path to a Wavefront OBJ file.  The mesh must be connected and manifold, possibly with boundary.  You will then be presented with a window displaying your mesh; hitting the spacebar will automatically generate a stripe pattern.  Further commands are listed below.
+where “input.obj” is a path to a Wavefront OBJ file. The mesh must be connected and manifold, possibly with boundary. You will then be presented with a window displaying your mesh; hitting the spacebar will automatically generate a stripe pattern. Further commands are listed below.
 
 
 User Interface

@@ -63,10 +63,13 @@ add_library(stripes
 
 target_include_directories(stripes PUBLIC include/ src/)
 target_compile_features(stripes PUBLIC cxx_std_17)
+target_compile_definitions(stripes PUBLIC SP_COMPILE_COMMAND_LINE)
 
-# Shader folder
+# Local folders
 set(SHADER_FOLDER "${CMAKE_CURRENT_SOURCE_DIR}/shaders/")
 target_compile_definitions(stripes PUBLIC "-DSHADER_FOLDER=\"${SHADER_FOLDER}\"")
+set(DATA_FOLDER "${CMAKE_CURRENT_SOURCE_DIR}/data/")
+target_compile_definitions(stripes PUBLIC "-DDATA_FOLDER=\"${DATA_FOLDER}\"")
 
 # Set dependencies
 target_link_libraries(stripes PUBLIC GLUT::GLUT glad::glad OpenGL::GLU)
