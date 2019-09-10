@@ -13,55 +13,49 @@ add_subdirectory(ext/glad)
 
 # Stripe library
 add_library(stripes
-	include/Camera.h
-	include/Complex.h
-	include/DenseMatrix.h
-	include/Edge.h
-	include/Face.h
-	include/HalfEdge.h
-	include/Image.h
-	include/LinearContext.h
-	include/LinearEquation.h
-	include/LinearPolynomial.h
-	include/LinearSystem.h
-	include/Mesh.h
-	include/MeshIO.h
-	include/Quaternion.h
-	include/Real.h
-	include/Shader.h
-	include/SparseMatrix.h
-	include/Types.h
-	include/Utility.h
-	include/Variable.h
-	include/Vector.h
-	include/Vertex.h
-	include/Viewer.h
-	src/Camera.cpp
-	src/Complex.cpp
-	src/DenseMatrix.cpp
-	src/DenseMatrix.inl
-	src/Edge.cpp
-	src/Face.cpp
-	src/HalfEdge.cpp
-	src/Image.cpp
-	src/LinearContext.cpp
-	src/LinearEquation.cpp
-	src/LinearPolynomial.cpp
-	src/LinearSystem.cpp
-	src/Mesh.cpp
-	src/MeshIO.cpp
-	src/Quaternion.cpp
-	src/Real.cpp
-	src/Shader.cpp
-	src/SparseMatrix.cpp
-	src/SparseMatrix.inl
-	src/Variable.cpp
-	src/Vector.cpp
-	src/Vertex.cpp
-	src/Viewer.cpp
+	src/stripes/Complex.cpp
+	src/stripes/Complex.h
+	src/stripes/DenseMatrix.cpp
+	src/stripes/DenseMatrix.h
+	src/stripes/DenseMatrix.inl
+	src/stripes/Edge.cpp
+	src/stripes/Edge.h
+	src/stripes/Face.cpp
+	src/stripes/Face.h
+	src/stripes/HalfEdge.cpp
+	src/stripes/HalfEdge.h
+	src/stripes/Image.cpp
+	src/stripes/Image.h
+	src/stripes/LinearContext.cpp
+	src/stripes/LinearContext.h
+	src/stripes/LinearEquation.cpp
+	src/stripes/LinearEquation.h
+	src/stripes/LinearPolynomial.cpp
+	src/stripes/LinearPolynomial.h
+	src/stripes/LinearSystem.cpp
+	src/stripes/LinearSystem.h
+	src/stripes/Mesh.cpp
+	src/stripes/Mesh.h
+	src/stripes/MeshIO.cpp
+	src/stripes/MeshIO.h
+	src/stripes/Quaternion.cpp
+	src/stripes/Quaternion.h
+	src/stripes/Real.cpp
+	src/stripes/Real.h
+	src/stripes/SparseMatrix.cpp
+	src/stripes/SparseMatrix.h
+	src/stripes/SparseMatrix.inl
+	src/stripes/Types.h
+	src/stripes/Utility.h
+	src/stripes/Variable.cpp
+	src/stripes/Variable.h
+	src/stripes/Vector.cpp
+	src/stripes/Vector.h
+	src/stripes/Vertex.cpp
+	src/stripes/Vertex.h
 )
 
-target_include_directories(stripes PUBLIC include/ src/)
+target_include_directories(stripes PUBLIC src/)
 target_compile_features(stripes PUBLIC cxx_std_17)
 target_compile_definitions(stripes PUBLIC SP_COMPILE_COMMAND_LINE)
 
@@ -72,7 +66,6 @@ set(DATA_FOLDER "${CMAKE_CURRENT_SOURCE_DIR}/data/")
 target_compile_definitions(stripes PUBLIC "-DDATA_FOLDER=\"${DATA_FOLDER}\"")
 
 # Set dependencies
-target_link_libraries(stripes PUBLIC GLUT::GLUT glad::glad OpenGL::GLU)
 target_include_directories(stripes PUBLIC ${CHOLMOD_INCLUDE_DIR})
 target_link_libraries(stripes PUBLIC ${CHOLMOD_LIBRARY})
 target_include_directories(stripes PUBLIC ${SUITESPARSEQR_INCLUDE_DIR})
@@ -81,5 +74,14 @@ target_include_directories(stripes PUBLIC ${UMFPACK_INCLUDES})
 target_link_libraries(stripes PUBLIC ${UMFPACK_LIBRARIES})
 
 # Demo application
-add_executable(StripePatterns src/main.cpp)
-target_link_libraries(StripePatterns PUBLIC stripes)
+add_executable(StripePatterns
+	src/viewer/main.cpp
+	src/viewer/Camera.cpp
+	src/viewer/Camera.h
+	src/viewer/Shader.cpp
+	src/viewer/Shader.h
+	src/viewer/Viewer.cpp
+	src/viewer/Viewer.h
+)
+
+target_link_libraries(StripePatterns PUBLIC stripes GLUT::GLUT glad::glad OpenGL::GLU)

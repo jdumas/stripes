@@ -9,7 +9,7 @@
 #ifndef DDG_CAMERA_H
 #define DDG_CAMERA_H
 
-#include "Quaternion.h"
+#include <stripes/Quaternion.h>
 
 #include <glad/glad.h>
 #include <GL/glut.h>

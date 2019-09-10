@@ -1,8 +1,8 @@
 #include <iostream>
 using namespace std;
 
+#include <stripes/DenseMatrix.h>
 #include "Viewer.h"
-#include "DenseMatrix.h"
 using namespace DDG;
 
 #include <unistd.h>

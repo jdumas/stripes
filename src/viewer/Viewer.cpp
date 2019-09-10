@@ -8,10 +8,10 @@
 using namespace std;
 
 #include "Viewer.h"
-#include "Image.h"
-#include "Complex.h"
-#include "Utility.h"
-#include "Image.h"
+#include <stripes/Image.h>
+#include <stripes/Complex.h>
+#include <stripes/Utility.h>
+#include <stripes/Image.h>
 using namespace DDGConstants;
 
 namespace DDG
