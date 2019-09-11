@@ -3,7 +3,6 @@
 
 #include <algorithm>
 #include <iostream>
-using namespace std;
 
 #include "DenseMatrix.h"
 #include "LinearContext.h"
@@ -264,7 +263,7 @@ namespace DDG
    int DenseMatrix<T> :: length( void ) const
    // returns the size of the largest dimension
    {
-      return max( m, n );
+      return std::max( m, n );
    }
 
    template <class T>
@@ -286,7 +285,7 @@ namespace DDG
       {
          for( int i = 0; i < m*n; i++ )
          {
-            r = max( r, data[i].norm() );
+            r = std::max( r, data[i].norm() );
          }
       }
       else if( type == lOne )
@@ -302,7 +301,7 @@ namespace DDG
          {
             r += data[i].norm2();
          }
-         r = sqrt( r );
+         r = std::sqrt( r );
       }
 
       return r;
@@ -434,6 +433,43 @@ namespace DDG
       }
 
       return sum;
+   }
+
+   template <>
+   template<typename URBG>
+   void DenseMatrix<Real> :: randomize( URBG && gen )
+   // replaces entries with uniformly distributed real random numbers in the interval [-1,1]
+   {
+      for( int i = 0; i < m*n; i++ )
+      {
+         data[i] = 2.*unitRand(gen) - 1.;
+      }
+   }
+
+   template <>
+   template<typename URBG>
+   void DenseMatrix<Complex> :: randomize( URBG && gen )
+   // replaces entries with uniformly distributed real random numbers in the interval [-1,1]
+   {
+      for( int i = 0; i < m*n; i++ )
+      {
+         data[i].re = 2.*unitRand(gen) - 1.;
+         data[i].im = 2.*unitRand(gen) - 1.;
+      }
+   }
+
+   template <>
+   template<typename URBG>
+   void DenseMatrix<Quaternion> :: randomize( URBG && gen )
+   // replaces entries with uniformly distributed real random numbers in the interval [-1,1]
+   {
+      for( int i = 0; i < m*n; i++ )
+      {
+         for( int k = 0; k < 4; k++ )
+         {
+            data[i][k] = 2.*unitRand(gen) - 1.;
+         }
+      }
    }
 }
 

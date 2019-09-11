@@ -1,5 +1,4 @@
 #include <cmath>
-#include <cstdlib>
 #include <fstream>
 #include <iostream>
 using namespace std;
@@ -11,19 +10,19 @@ namespace DDG
    Image :: Image( int width, int height )
    : w( width ), h( height ), pixels( w*h*3 )
    {}
-   
+
    float& Image :: operator()( int x, int y )
    // accesses pixel (x,y)
    {
       return pixels[ x + y*w ];
    }
-   
+
    const float& Image :: operator()( int x, int y ) const
    // accesses pixel (x,y)
    {
       return pixels[ x + y*w ];
    }
-   
+
    float Image :: sample( float x, float y ) const
    // samples image at (x,y) using bilinear filtering
    {
@@ -36,26 +35,26 @@ namespace DDG
       int y0 = (int) floor( y );
       int x1 = x0 + 1;
       int y1 = y0 + 1;
-   
+
       clamp( x0, y0 );
       clamp( x1, y1 );
-   
+
       return by * ( bx * I(x0,y0) + ax * I(x1,y0) ) +
              ay * ( bx * I(x0,y1) + ax * I(x1,y1) ) ;
    }
-   
+
    int Image :: width( void ) const
    // returns image width
    {
       return w;
    }
-   
+
    int Image :: height( void ) const
    // returns image height
    {
       return h;
    }
-   
+
    class TGAHeader
    // header format for Truevision TGA images
    {
@@ -79,13 +78,13 @@ namespace DDG
    // (must be uncompressed RGB image with 24 or 32 bits per pixel)
    {
       ifstream in( filename, ios_base::binary );
-   
+
       if( !in.is_open() )
       {
          cerr << "Error: could not open file " << filename << " for input!" << endl;
          exit( 1 );
       }
-   
+
       // read header
       TGAHeader header;
       in.read( (char*) &(header.idFieldSize),        1 );
@@ -100,10 +99,10 @@ namespace DDG
       in.read( (char*) &(header.height),             2 );
       in.read( (char*) &(header.bitsPerPixel),       1 );
       in.read( (char*) &(header.imageSpecification), 1 );
-   
+
       w = header.width;
       h = header.height;
-   
+
       // validate data type
       const char uncompressedRGB = 2;
       if( header.dataTypeCode != uncompressedRGB ||
@@ -113,11 +112,11 @@ namespace DDG
          cerr << "Error: input must be uncompressed RGB image with 24 or 32 bits per pixel." << endl;
          exit( 1 );
       }
-   
+
       // read identification field (unused)
       vector<char> idField( header.idFieldSize );
       in.read( &idField[0], header.idFieldSize );
-   
+
       // read color map data (unused)
       if( header.colorMapType == 1 )
       {
@@ -126,12 +125,12 @@ namespace DDG
          vector<char> colorMapData( colorMapSize );
          in.read( &colorMapData[0], colorMapSize );
       }
-   
+
       // read pixel data
       int n = w*h*header.bitsPerPixel/8;
       vector<unsigned char> pixelData( n );
       in.read( (char*) &pixelData[0], n );
-   
+
       // convert pixel data to floating point
       pixels.resize( n );
       for( int i = 0; i < n; i++ )
@@ -147,19 +146,19 @@ namespace DDG
          }
       }
    }
-   
+
    void Image :: write( const char* filename ) const
    // writes an image file in Truevision TGA format
    // (uncompressed RGB image with 24 bits per pixel)
    {
       ofstream out( filename, ios_base::binary );
-   
+
       if( !out.is_open() )
       {
          cerr << "Error: could not open file " << filename << " for output!" << endl;
          exit( 1 );
       }
-   
+
       TGAHeader header;
       header.idFieldSize = 0;
       header.colorMapType = 0;
@@ -173,7 +172,7 @@ namespace DDG
       header.height = h;
       header.bitsPerPixel = 24;
       header.imageSpecification = 0;
-   
+
       // write header
       out.write( (char*) &(header.idFieldSize),        1 );
       out.write( (char*) &(header.colorMapType),       1 );
@@ -187,18 +186,18 @@ namespace DDG
       out.write( (char*) &(header.height),             2 );
       out.write( (char*) &(header.bitsPerPixel),       1 );
       out.write( (char*) &(header.imageSpecification), 1 );
-      
+
       // convert pixel data from floating point
       vector<unsigned char> pixelData( w*h*3 );
       for( int i = 0; i < w*h*3; i++ )
       {
          pixelData[i] = (unsigned char)( pixels[i] * 255. );
       }
-   
+
       // write pixel data
       out.write( (char*) &pixelData[0], w*h*3 );
    }
-   
+
    void Image :: clamp( int& x, int& y ) const
    // clamps coordinates to range [0,w-1] x [0,h-1]
    {

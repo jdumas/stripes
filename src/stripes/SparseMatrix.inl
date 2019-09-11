@@ -3,7 +3,6 @@
 #include <iostream>
 #include <cmath>
 #include <complex>
-using namespace std;
 
 #include <SuiteSparseQR.hpp>
 #include <umfpack.h>
@@ -94,8 +93,8 @@ namespace DDG
       assert( A.nColumns() == B.nRows() );
 
       // collect nonzeros in each row
-      vector< vector< int > > Bcol( B.nRows() );
-      vector< vector<  T  > > Bval( B.nRows() );
+      std::vector< std::vector< int > > Bcol( B.nRows() );
+      std::vector< std::vector<  T  > > Bval( B.nRows() );
       for( const_iterator e  = B.begin();
                           e != B.end();
                           e ++ )
@@ -117,11 +116,11 @@ namespace DDG
          int i = e->first.second;
          int j = e->first.first;
 
-         for( size_t n = 0; n < Bcol[j].size(); n++ )
+         for( size_t nn = 0; nn < Bcol[j].size(); nn++ )
          {
-            int k = Bcol[j][n];
+            int k = Bcol[j][nn];
 
-            C( i, k ) += e->second * Bval[j][n];
+            C( i, k ) += e->second * Bval[j][nn];
          }
       }
 
@@ -264,7 +263,7 @@ namespace DDG
    SparseMatrix<T> operator*( const SparseMatrix<T>& A, const T& c )
    {
       SparseMatrix<T> Ac = A;
-      
+
       Ac *= c;
 
       return Ac;
@@ -307,7 +306,7 @@ namespace DDG
    int SparseMatrix<T> :: length( void ) const
    // returns the size of the largest dimension
    {
-      return max( m, n );
+      return std::max( m, n );
    }
 
    template <class T>
@@ -327,7 +326,7 @@ namespace DDG
    {
       SparseMatrix<T>& A( *this );
 
-      for( int i = 0; i < max( m, n ); i++ )
+      for( int i = 0; i < std::max( m, n ); i++ )
       {
          A( i, i ) = A( i, i ).inv();
       }
@@ -353,7 +352,7 @@ namespace DDG
       const int maxSize = 1048576;
       if( m*n > maxSize )
       {
-         cerr << "Error: refusing to convert sparse to dense (too big!)" << "\n";
+         std::cerr << "Error: refusing to convert sparse to dense (too big!)" << "\n";
          exit( 1 );
       }
 
@@ -474,7 +473,7 @@ namespace DDG
    {
       assert( m == n );
       SparseMatrix<T>& A( *this );
-      
+
       for( int i = 0; i < m; i++ )
       {
          A( i, i ) += c;
@@ -581,7 +580,8 @@ namespace DDG
 #endif
 
       DenseMatrix<T> y;
-      x.randomize();
+      std::mt19937 gen;
+      x.randomize(gen);
 
       for( int iter = 0; iter < maxEigIter; iter++ )
       {
@@ -639,7 +639,8 @@ namespace DDG
       SparseFactor<T> L;
       L.build( A );
 
-      x.randomize();
+      std::mt19937 gen;
+      x.randomize(gen);
 
       for( int iter = 0; iter < maxEigIter; iter++ )
       {
@@ -671,7 +672,8 @@ namespace DDG
       SparseFactor<T> L;
       L.build( A );
 
-      x.randomize();
+      std::mt19937 gen;
+      x.randomize(gen);
 
       for( int iter = 0; iter < maxEigIter; iter++ )
       {
@@ -720,10 +722,11 @@ namespace DDG
       SparseFactor<T> L;
       L.build( A );
 
+      std::mt19937 gen;
       for( int k = 0; k < nEigs; k++ )
       {
          V[k] = DenseMatrix<T>( nRows );
-         V[k].randomize();
+         V[k].randomize(gen);
 
          for( int iter = 0; iter < maxEigIter; iter++ )
          {
@@ -861,7 +864,7 @@ namespace DDG
       L = cholmod_l_analyze( Ac, context );
 #ifdef SP_DEBUG
       t1 = clock();
-      cerr << "analyze: " << seconds(t0,t1) << "s" << endl;
+      std::cerr << "analyze: " << seconds(t0,t1) << "s" << std::endl;
 #endif
 
 #ifdef SP_DEBUG
@@ -870,7 +873,7 @@ namespace DDG
       cholmod_l_factorize( Ac, L, context );
 #ifdef SP_DEBUG
       t1 = clock();
-      cerr << "factorize: " << seconds(t0,t1) << "s" << endl;
+      std::cerr << "factorize: " << seconds(t0,t1) << "s" << std::endl;
 #endif
    }
 

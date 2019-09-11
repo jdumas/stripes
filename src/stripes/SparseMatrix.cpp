@@ -170,7 +170,7 @@ namespace DDG
 #ifdef SP_DEBUG
       int t0 = clock();
 #endif
-      x = SuiteSparseQR< complex<double> >( A.to_cholmod(), b.to_cholmod(), context );
+      x = SuiteSparseQR< std::complex<double> >( A.to_cholmod(), b.to_cholmod(), context );
 #ifdef SP_DEBUG
       int t1 = clock();
       cout << "[qr] time: " << seconds( t0, t1 ) << "s" << "\n";

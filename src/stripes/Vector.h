@@ -102,13 +102,14 @@ namespace DDG
          Vector abs( void ) const;
          // returns vector containing magnitude of each component
 
-         static Vector randSphere( void );
+         template<typename URBG>
+         static Vector randSphere( URBG && gen );
          // returns a random vector uniformly sampled from the unit sphere
-   
+
          double x, y, z;
          // components
    };
-   
+
    Vector operator* ( const double& c, const Vector& v );
    // left scalar multiplication
 
@@ -121,6 +122,8 @@ namespace DDG
    std::ostream& operator << (std::ostream& os, const Vector& o);
    // prints components
 }
+
+#include "Vector.inl"
 
 #endif
 

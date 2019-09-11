@@ -29,7 +29,7 @@
 // Internally SparseMatrix stores nonzero entries in a heap data structure; the
 // amortized cost of insertion is therefore no worse than the sorting cost of
 // putting the matrix in compressed-column order.
-// 
+//
 
 #ifndef DDG_SPARSE_MATRIX_H
 #define DDG_SPARSE_MATRIX_H
@@ -66,7 +66,7 @@ namespace DDG
 
          SparseMatrix<T> transpose( void ) const;
          // returns the transpose of this matrix
-         
+
          cholmod_sparse* to_cholmod( void );
          // returns pointer to copy of matrix in compressed-column CHOLMOD format
 
@@ -108,7 +108,7 @@ namespace DDG
 
          void invertDiagonal( void );
          // inverts diagonal elements
-         
+
          static SparseMatrix<T> identity( int N );
          // returns the N x N identity matrix
 
@@ -256,7 +256,7 @@ namespace DDG
    // respect to the inner product B; V is a list of eigenvectors (as
    // columns) and D is a list of eigenvalues (in the same order);
    // nEigs is the requested number of eigenpairs
-   
+
    template <class T>
    double residual( const SparseMatrix<T>& A,
                     const  DenseMatrix<T>& x,

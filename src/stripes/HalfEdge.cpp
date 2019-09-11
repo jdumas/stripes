@@ -38,7 +38,7 @@ namespace DDG
       Vector u = (b-a).unit();
       Vector v = (c-a).unit();
 
-      return acos( max( -1., min( 1., dot( u, v ))));
+      return std::acos( std::max( -1., std::min( 1., dot( u, v ))));
    }
 
    double HalfEdge :: cotan( void ) const
@@ -63,7 +63,7 @@ namespace DDG
 
    void HalfEdge :: updateTexCoord( int p )
    {
-      const double infty = numeric_limits<double>::max();
+      const double infty = std::numeric_limits<double>::max();
       HalfEdgeCIter hij;
 
       if( next->texcoord[p] != infty )
@@ -97,7 +97,7 @@ namespace DDG
          omegaIJ = -omegaIJ;
       }
 
-      Complex rij( cos(omegaIJ), sin(omegaIJ) );
+      Complex rij( std::cos(omegaIJ), std::sin(omegaIJ) );
       texcoord[p] = phiI.arg() + ( (rij*phiI).inv()*(phiJ) ).arg() + omegaIJ;
    }
 

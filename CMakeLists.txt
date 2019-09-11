@@ -3,6 +3,7 @@ project(stripes)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 include(UseColors)
+include(Warnings)
 
 # Dependencies
 find_package(OpenGL REQUIRED)
@@ -51,6 +52,7 @@ add_library(stripes
 	src/stripes/Variable.h
 	src/stripes/Vector.cpp
 	src/stripes/Vector.h
+	src/stripes/Vector.inl
 	src/stripes/Vertex.cpp
 	src/stripes/Vertex.h
 )
@@ -58,6 +60,7 @@ add_library(stripes
 target_include_directories(stripes PUBLIC src/)
 target_compile_features(stripes PUBLIC cxx_std_17)
 target_compile_definitions(stripes PUBLIC SP_COMPILE_COMMAND_LINE)
+target_link_libraries(stripes PRIVATE warnings::all)
 
 # Local folders
 set(SHADER_FOLDER "${CMAKE_CURRENT_SOURCE_DIR}/shaders/")

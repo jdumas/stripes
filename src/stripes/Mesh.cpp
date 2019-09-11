@@ -15,12 +15,12 @@ namespace DDG
      lambda( 130. ), // initial global line frequency
      nCoordinateFunctions( 1 )
    {}
-   
+
    Mesh :: Mesh( const Mesh& mesh )
    {
       *this = mesh;
    }
-   
+
    class  HalfEdgeIterCompare { public: bool operator()( const  HalfEdgeIter& i, const  HalfEdgeIter& j ) const { return &*i < &*j; } };
    class HalfEdgeCIterCompare { public: bool operator()( const HalfEdgeCIter& i, const HalfEdgeCIter& j ) const { return &*i < &*j; } };
    class    VertexIterCompare { public: bool operator()( const    VertexIter& i, const    VertexIter& j ) const { return &*i < &*j; } };
@@ -29,14 +29,14 @@ namespace DDG
    class     FaceCIterCompare { public: bool operator()( const     FaceCIter& i, const     FaceCIter& j ) const { return &*i < &*j; } };
    class      EdgeIterCompare { public: bool operator()( const      EdgeIter& i, const      EdgeIter& j ) const { return &*i < &*j; } };
    class     EdgeCIterCompare { public: bool operator()( const     EdgeCIter& i, const     EdgeCIter& j ) const { return &*i < &*j; } };
-   
+
    const Mesh& Mesh :: operator=( const Mesh& mesh )
    {
       map< HalfEdgeCIter, HalfEdgeIter, HalfEdgeCIterCompare > halfedgeOldToNew;
       map<   VertexCIter,   VertexIter,   VertexCIterCompare >   vertexOldToNew;
       map<     EdgeCIter,     EdgeIter,     EdgeCIterCompare >     edgeOldToNew;
       map<     FaceCIter,     FaceIter,     FaceCIterCompare >     faceOldToNew;
-   
+
       // copy geometry from the original mesh and create a
       // map from pointers in the original mesh to
       // those in the new mesh
@@ -44,7 +44,7 @@ namespace DDG
        vertices.clear(); for(   VertexCIter  v =  mesh.vertices.begin();  v !=  mesh.vertices.end();  v++ )   vertexOldToNew[ v  ] =  vertices.insert(  vertices.end(), *v  );
           edges.clear(); for(     EdgeCIter  e =     mesh.edges.begin();  e !=     mesh.edges.end();  e++ )     edgeOldToNew[ e  ] =     edges.insert(     edges.end(), *e  );
           faces.clear(); for(     FaceCIter  f =     mesh.faces.begin();  f !=     mesh.faces.end();  f++ )     faceOldToNew[ f  ] =     faces.insert(     faces.end(), *f  );
-   
+
       // "search and replace" old pointers with new ones
       for( HalfEdgeIter he = halfedges.begin(); he != halfedges.end(); he++ )
       {
@@ -54,11 +54,11 @@ namespace DDG
          he->edge   =     edgeOldToNew[ he->edge   ];
          he->face   =     faceOldToNew[ he->face   ];
       }
-   
+
       for( VertexIter v = vertices.begin(); v != vertices.end(); v++ ) v->he = halfedgeOldToNew[ v->he ];
       for(   EdgeIter e =    edges.begin(); e !=    edges.end(); e++ ) e->he = halfedgeOldToNew[ e->he ];
       for(   FaceIter f =    faces.begin(); f !=    faces.end(); f++ ) f->he = halfedgeOldToNew[ f->he ];
-   
+
       return *this;
    }
 
@@ -257,7 +257,7 @@ namespace DDG
          }
          while( he != f->he );
       }
-      
+
       // Some domains will admit a trivial section (e.g., a flat disk),
       // hence we shift to make the matrix strictly positive-definite for
       // the Cholesky solver.  Note, however, that a constant shift will
@@ -331,7 +331,7 @@ namespace DDG
          int j = e->he->flip->face->index;
          e->omega = u(j) - u(i);
       }
-      
+
       // construct parallel section
       for( VertexIter v = vertices.begin(); v != vertices.end(); v++ )
       {
@@ -394,7 +394,7 @@ namespace DDG
       }
       mean.normalize();
 
-      // align 
+      // align
       for( VertexIter v = vertices.begin(); v != vertices.end(); v++ )
       {
          v->directionField *= mean;
@@ -406,14 +406,14 @@ namespace DDG
    void Mesh :: computeSmoothestSection( void )
    {
       cout << "Computing globally smoothest direction field..." << endl;
-      srand( 1234325 );
+      // srand( 1234325 );
 
       buildFieldEnergy();
 
       int nV = vertices.size();
       DenseMatrix<Complex> groundState( nV );
       smallestEigPositiveDefinite( energyMatrix, massMatrix, groundState );
-      
+
       for( VertexIter v = vertices.begin(); v != vertices.end(); v++ )
       {
          v->directionField = groundState( v->index );
@@ -440,7 +440,7 @@ namespace DDG
       A = energyMatrix + Complex(t)*massMatrix;
 
       solvePositiveDefinite( A, smoothedField, principalField );
-      
+
       for( VertexIter v = vertices.begin(); v != vertices.end(); v++ )
       {
          v->directionField = smoothedField( v->index ).unit();
@@ -635,8 +635,8 @@ namespace DDG
    {
       cerr << "Computing stripe pattern..." << endl;
 
-      //srand( time( NULL ) );
-      srand( 1234567 );
+      // srand( time( NULL ) );
+      // srand( 1234567 );
 
       SparseMatrix<Real> A;
       buildEnergy( A, coordinate );
@@ -673,7 +673,7 @@ namespace DDG
 
       return mu;
    }
-   
+
    void Mesh :: assignTextureCoordinates( int p )
    // This method computes the final texture coordinates that are actually
    // used by OpenGL to draw the stripes, starting with the solution to
@@ -692,7 +692,7 @@ namespace DDG
          Complex psiI = hij->vertex->parameterization;
          Complex psiJ = hjk->vertex->parameterization;
          Complex psiK = hki->vertex->parameterization;
-         
+
          double cIJ = ( hij->edge->he != hij ? -1. : 1. );
          double cJK = ( hjk->edge->he != hjk ? -1. : 1. );
          double cKI = ( hki->edge->he != hki ? -1. : 1. );

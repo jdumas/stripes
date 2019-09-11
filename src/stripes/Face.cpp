@@ -37,7 +37,7 @@ namespace DDG
       {
          double thetaI = h->angularCoordinate;
          double thetaJ = h->flip->angularCoordinate + M_PI;
-         
+
          Omega += thetaJ - thetaI;
 
          h = h->next;
@@ -52,7 +52,7 @@ namespace DDG
       if( isBoundary() ) return 0.;
 
       double Omega = 0.;
-      double index = 0.;
+      double idx = 0.;
       HalfEdgeCIter hi = he;
       do
       {
@@ -63,15 +63,15 @@ namespace DDG
          double dTheta = thetaI - thetaJ;
 
          Omega += dTheta;
-         index += fmodPI( phiJ - phiI + k*dTheta );
+         idx += fmodPI( phiJ - phiI + k*dTheta );
 
          hi = hi->next;
       }
       while( hi != he );
 
-      index -= k * fmodPI(Omega);
+      idx -= k * fmodPI(Omega);
 
-      return lround( index / (2.*M_PI) );
+      return lround( idx / (2.*M_PI) );
    }
 
    // double Face :: paramIndex( void ) const

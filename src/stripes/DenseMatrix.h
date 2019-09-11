@@ -25,7 +25,7 @@
 // which can be used by routines in SuiteSparse.  For basic operations, however,
 // you should not need to access this pointer explicitly -- see the solve()
 // method in SparseMatrix.h.
-// 
+//
 
 #ifndef DDG_DENSEMATRIX_H
 #define DDG_DENSEMATRIX_H
@@ -50,13 +50,13 @@ namespace DDG
       public:
          DenseMatrix( int m = 0, int n = 1 );
          // initialize an mxn matrix (specifying just m yields a column vector)
-         
+
          DenseMatrix( const DenseMatrix<T>& A );
          // copy constructor
 
          const DenseMatrix<T>& operator=( const DenseMatrix<T>& B );
          // copies B
-         
+
          ~DenseMatrix( void );
          // destructor
 
@@ -85,7 +85,7 @@ namespace DDG
          T& operator()( int index );
          T  operator()( int index ) const;
          // access the specified element of a vector (uses 0-based indexing)
-         
+
          DenseMatrix<T> transpose( void ) const;
          // returns the transpose of this matrix
 
@@ -132,7 +132,8 @@ namespace DDG
          void removeMean( void );
          // removes the mean of the real part from the real part
 
-         void randomize( void );
+         template<typename URBG>
+         void randomize( URBG && gen );
          // replaces entries with uniformly distributed random real numbers in the interval [-1,1]
 
       protected:

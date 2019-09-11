@@ -86,7 +86,7 @@ namespace DDG
          cholmod_l_free_dense( &cData, context );
       }
       cData = B;
-      
+
       m = cData->nrow;
       n = cData->ncol;
       data.resize( m*n );
@@ -165,7 +165,7 @@ namespace DDG
    {
       const int p = 3;
       os.precision( p );
-      os << scientific;
+      os << std::scientific;
 
       for( int i = 0; i < o.nRows(); i++ )
       {
@@ -191,9 +191,9 @@ namespace DDG
                os << x << " ";
             }
          }
-         os << "]" << endl;
+         os << "]" << std::endl;
       }
-   
+
       return os;
    }
 
@@ -202,7 +202,7 @@ namespace DDG
    {
       const int p = 2;
       os.precision( p );
-      os << scientific;
+      os << std::scientific;
 
       for( int i = 0; i < o.nRows(); i++ )
       {
@@ -253,9 +253,9 @@ namespace DDG
                os << abs( z.im ) << "i ";
             }
          }
-         os << " ]" << endl;
+         os << " ]" << std::endl;
       }
-   
+
       return os;
    }
 
@@ -264,7 +264,7 @@ namespace DDG
    {
       const int p = 2;
       os.precision( p );
-      os << scientific;
+      os << std::scientific;
 
       for( int i = 0; i < o.nRows(); i++ )
       {
@@ -275,44 +275,9 @@ namespace DDG
 
             os << " " << q;
          }
-         os << " ]" << endl;
+         os << " ]" << std::endl;
       }
-   
+
       return os;
    }
-
-   template <>
-   void DenseMatrix<Real> :: randomize( void )
-   // replaces entries with uniformly distributed real random numbers in the interval [-1,1]
-   {
-      for( int i = 0; i < m*n; i++ )
-      {
-         data[i] = 2.*unitRand() - 1.;
-      }
-   }
-
-   template <>
-   void DenseMatrix<Complex> :: randomize( void )
-   // replaces entries with uniformly distributed real random numbers in the interval [-1,1]
-   {
-      for( int i = 0; i < m*n; i++ )
-      {
-         data[i].re = 2.*unitRand() - 1.;
-         data[i].im = 2.*unitRand() - 1.;
-      }
-   }
-
-   template <>
-   void DenseMatrix<Quaternion> :: randomize( void )
-   // replaces entries with uniformly distributed real random numbers in the interval [-1,1]
-   {
-      for( int i = 0; i < m*n; i++ )
-      {
-         for( int k = 0; k < 4; k++ )
-         {
-            data[i][k] = 2.*unitRand() - 1.;
-         }
-      }
-   }
 }
-

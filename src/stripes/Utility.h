@@ -2,7 +2,7 @@
 #define DDG_UTILITY_H
 
 #include <cmath>
-#include <cstdlib>
+#include <random>
 #include "Utility.h"
 #include "Complex.h"
 
@@ -23,16 +23,17 @@ namespace DDG
       return 0.;
    }
 
-   inline double unitRand( void )
+   template<typename URBG>
+   inline double unitRand( URBG && gen )
    {
-      const double rRandMax = 1. / (double) RAND_MAX;
-
-      return rRandMax * (double) rand();
+      std::uniform_real_distribution<double> dist(0.0, 1.0);
+      return dist(gen);
    }
 
-   inline double randomReal( double minVal, double maxVal )
+   template<typename URBG>
+   inline double randomReal( double minVal, double maxVal, URBG && gen )
    {
-      return unitRand()*(maxVal-minVal) + minVal;
+      return unitRand(gen)*(maxVal-minVal) + minVal;
    }
 
    inline double seconds( int t0, int t1 )
@@ -42,12 +43,12 @@ namespace DDG
 
    inline double angle( const Vector& u, const Vector& v )
    {
-      return acos( std::max( -1., std::min( 1., dot( u.unit(), v.unit() ))));
+      return std::acos( std::max( -1., std::min( 1., dot( u.unit(), v.unit() ))));
    }
 
-   inline const double fmodPI( const double theta )
+   inline double fmodPI( const double theta )
    {
-      return theta - (2.*M_PI) * floor( (theta+M_PI) / (2.*M_PI) );
+      return theta - (2.*M_PI) * std::floor( (theta+M_PI) / (2.*M_PI) );
    }
 }
 
