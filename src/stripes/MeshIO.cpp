@@ -5,54 +5,18 @@
 
 #include "MeshIO.h"
 #include "Mesh.h"
-#include "Complex.h"
 #include "Utility.h"
 
 using namespace std;
 
 namespace DDG
 {
-   class Index
-   {
-      public:
-         Index( void )
-         {}
-   
-         Index( int p, int t, int n )
-         : position( p ), texcoord( t ), normal( n )
-         {}
-   
-         bool operator<( const Index& i ) const
-         {
-            if( position < i.position ) return true;
-            if( position > i.position ) return false;
-            if( texcoord < i.texcoord ) return true;
-            if( texcoord > i.texcoord ) return false;
-            if(   normal < i.normal   ) return true;
-            if(   normal > i.normal   ) return false;
-            return false;
-         }
-   
-         int position;
-         int texcoord;
-         int normal;
-   };
-   
-   class MeshData
-   {
-      public:
-         std::vector<Vector> positions;
-         std::vector<Complex> texcoords;
-         std::vector<Vector> normals;
-         std::vector<Vector> tangents;
-         std::vector< std::vector< Index > > indices;
-   };
-   
+
    int MeshIO :: read( istream& in, Mesh& mesh )
    // reads a mesh from a valid, open input stream in
    {
       MeshData data;
-   
+
       if( readMeshData( in, data ))
       {
          return 1;
@@ -65,13 +29,13 @@ namespace DDG
 
       return 0;
    }
-   
+
    void MeshIO :: write( ostream& out, const Mesh& mesh )
    // writes a mesh to a valid, open output stream out
    {
       int currentIndex = 1;
       map<VertexCIter,int> vertexIndex;
-   
+
       for( VertexCIter v  = mesh.vertices.begin();
                        v != mesh.vertices.end();
                        v++ )
@@ -79,7 +43,7 @@ namespace DDG
          out << "v " << v->position.x << " "
                      << v->position.y << " "
                      << v->position.z << endl;
-   
+
          vertexIndex[ v ] = currentIndex;
          currentIndex++;
       }
@@ -89,7 +53,7 @@ namespace DDG
                      f ++ )
       {
          HalfEdgeIter he = f->he;
-   
+
          for( int j = 0; j < 3; j++ )
          {
             Complex z = he->texcoord / (2.*M_PI) + Complex( .5, .5 );
@@ -97,20 +61,20 @@ namespace DDG
             he = he->next;
          }
       }
-   
+
       for( size_t i = 0; i < mesh.faces.size(); i++ )
       {
          const Face& f( mesh.faces[i] );
          HalfEdgeIter he = f.he;
-   
+
          // don't write boundary faces
          if( he->onBoundary )
          {
             continue;
          }
-   
+
          out << "f ";
-   
+
          int j = 0;
          do
          {
@@ -119,22 +83,22 @@ namespace DDG
             j++;
          }
          while( he != f.he );
-   
+
          out << endl;
       }
    }
-   
+
    int MeshIO :: readMeshData( istream& in, MeshData& data )
    {
       string line;
-   
+
       while( getline( in, line ))
       {
          stringstream ss( line );
          string token;
-   
+
          ss >> token;
-   
+
          if( token == "v"  ) { readPosition( ss, data ); continue; } // vertex
          if( token == "vt" ) { readTexCoord( ss, data ); continue; } // texture coordinate
          if( token == "vn" ) { readNormal  ( ss, data ); continue; } // vertex normal
@@ -157,7 +121,7 @@ namespace DDG
 
       return 0;
    }
-   
+
    void MeshIO :: preallocateMeshElements( const MeshData& data, Mesh& mesh )
    {
       // count the number of edges
@@ -171,13 +135,13 @@ namespace DDG
             int J = (I+1) % f->size();
             int i = (*f)[I].position;
             int j = (*f)[J].position;
-   
+
             if( i > j ) swap( i, j );
-   
+
             edges.insert( pair<int,int>( i, j ));
          }
       }
-   
+
       int nV = data.positions.size();
       int nE = edges.size();
       int nF = data.indices.size();
@@ -189,7 +153,7 @@ namespace DDG
       mesh.vertices.clear();
       mesh.edges.clear();
       mesh.faces.clear();
-   
+
       mesh.halfedges.reserve( nHE );
       mesh.vertices.reserve( nV );
       mesh.edges.reserve( nE );
@@ -197,16 +161,16 @@ namespace DDG
    }
 
    extern vector<HalfEdge> isolated; // all isolated vertices point to isolated.begin()
-   
+
    int MeshIO :: buildMesh( const MeshData& data, Mesh& mesh )
    {
       map< pair< int, int >, int > edgeCount;
       map< pair< int, int >, HalfEdgeIter > existingHalfEdges;
       map< int, VertexIter > indexToVertex;
       map< HalfEdgeIter, bool > hasFlipEdge;
-   
+
       preallocateMeshElements( data, mesh );
-   
+
       // allocate a vertex for each position in the data and construct
       // a map from vertex indices to vertex pointers
       int nT = data.tangents.size();
@@ -222,7 +186,7 @@ namespace DDG
             newVertex->tangent = data.tangents[ i ];
          }
       }
-   
+
       // insert each face into the mesh
       int faceIndex = 0;
       bool degenerateFaces = false;
@@ -249,14 +213,14 @@ namespace DDG
          {
             hes[ i ] = mesh.halfedges.insert( mesh.halfedges.end(), HalfEdge());
          }
-   
+
          // initialize these new halfedges
          for( int i = 0; i < N; i++ )
          {
             // the current halfedge goes from vertex a to vertex b
             int a = (*f)[     i     ].position;
             int b = (*f)[ (i+1) % N ].position;
-   
+
             // set current halfedge's attributes
             hes[ i ]->next = hes[ (i+1) % N ];
             hes[ i ]->vertex = indexToVertex[ a ];
@@ -264,17 +228,17 @@ namespace DDG
             if( t >= 0 ) hes[ i ]->texcoord = data.texcoords[ t ];
             else         hes[ i ]->texcoord = Complex( 0., 0. );
             hes[ i ]->onBoundary = false;
-   
+
             // keep track of which halfedges have flip edges defined (for detecting boundaries)
             hasFlipEdge[ hes[ i ]] = false;
-   
+
             // point vertex a at the current halfedge
             indexToVertex[ a ]->he = hes[ i ];
-   
+
             // point the new face and this half edge to each-other
             hes[ i ]->face = newFace;
             newFace->he = hes[ i ];
-   
+
             // if we've created an edge between a and b in the past, it is the
             // flip edge of the current halfedge
             if( a > b ) swap( a, b );
@@ -292,7 +256,7 @@ namespace DDG
                hes[ i ]->edge->he = hes[i];
                edgeCount[ pair<int,int>( a, b ) ] = 0;
             }
-   
+
             // record the fact that we've created a halfedge from a to b
             existingHalfEdges[ pair<int,int>( a, b ) ] = hes[ i ];
 
@@ -313,7 +277,7 @@ namespace DDG
       {
          return 1;
       }
-   
+
       // insert extra faces for each boundary cycle
       for( HalfEdgeIter currentHE  = mesh.halfedges.begin();
                         currentHE != mesh.halfedges.end();
@@ -321,12 +285,12 @@ namespace DDG
       {
          // if we find a halfedge with no flip edge defined, create
          // a new face and link it to the corresponding boundary cycle
-   
+
          if( !hasFlipEdge[ currentHE ] )
          {
             // create a new face
             FaceIter newFace = mesh.faces.insert( mesh.faces.end(), Face());
-   
+
             // walk along this boundary cycle
             vector<HalfEdgeIter> boundaryCycle;
             HalfEdgeIter he = currentHE;
@@ -334,13 +298,13 @@ namespace DDG
             {
                // create a new halfedge on the boundary face
                HalfEdgeIter newHE = mesh.halfedges.insert( mesh.halfedges.end(), HalfEdge());
-   
+
                // mark only the halfedge on the boundary face as being on the boundary
                newHE->onBoundary = true;
-   
+
                // link the current halfedge in the cycle to its new flip edge
                he->flip = newHE;
-   
+
                // grab the next halfedge along the boundary by finding
                // the next halfedge around the current vertex that doesn't
                // have a flip edge defined
@@ -349,25 +313,25 @@ namespace DDG
                {
                   nextHE = nextHE->flip->next;
                }
-   
+
                // set attributes for the flip edge (we'll set ->next below)
                newHE->flip = he;
                newHE->vertex = nextHE->vertex;
                newHE->edge = he->edge;
                newHE->face = newFace;
                newHE->texcoord = nextHE->texcoord;
-   
+
                // point the new face to this half edge
                newFace->he = newHE;
-   
+
                // keep track of all the new halfedges in the boundary cycle
                boundaryCycle.push_back( newHE );
-   
+
                // continue to walk along the cycle
                he = nextHE;
-   
+
             } while( he != currentHE );
-   
+
             // link together the cycle of boundary halfedges
             unsigned int N = boundaryCycle.size();
             for( unsigned int i = 0; i < N; i++ )
@@ -402,22 +366,22 @@ namespace DDG
 
       return 0;
    }
-   
+
    void MeshIO :: readPosition( stringstream& ss, MeshData& data )
    {
       double x, y, z;
-   
+
       ss >> x >> y >> z;
-   
+
       data.positions.push_back( Vector( x, y, z ));
    }
-   
+
    void MeshIO :: readTexCoord( stringstream& ss, MeshData& data )
    {
       double u, v;
-   
+
       ss >> u >> v;
-   
+
       Complex z = Complex( u-.5, v-.5 )*(2.*M_PI);
 #ifdef SP_FLAT_TORUS
       z.re += .5*z.im;
@@ -425,38 +389,38 @@ namespace DDG
 #endif
       data.texcoords.push_back( z );
    }
-   
+
    void MeshIO :: readNormal( stringstream& ss, MeshData& data )
    {
       double x, y, z;
-   
+
       ss >> x >> y >> z;
-   
+
       data.normals.push_back( Vector( x, y, z ));
    }
-   
+
    void MeshIO :: readTangent( stringstream& ss, MeshData& data )
    {
       double x, y, z;
-   
+
       ss >> x >> y >> z;
-   
+
       data.tangents.push_back( Vector( x, y, z ));
    }
-   
+
    void MeshIO :: readFace( stringstream& ss, MeshData &data )
    {
       vector<Index> faceIndices;
       string token;
-   
+
       while( ss >> token )
       {
          faceIndices.push_back( parseFaceIndex( token ));
       }
-   
+
       data.indices.push_back( faceIndices );
    }
-   
+
    Index MeshIO :: parseFaceIndex( const string& token )
    {
       // parse indices of the form
@@ -466,18 +430,18 @@ namespace DDG
       // where p is an index into positions, t is an index into
       // texcoords, n is an index into normals, and [.] indicates
       // that an index is optional
-      
+
       stringstream in( token );
       string indexstring;
       int indices[3] = { -1, -1, -1 };
       int i = 0;
-   
+
       while( getline( in, indexstring, '/' ))
       {
          stringstream ss( indexstring );
          ss >> indices[i++];
       }
-   
+
       // decrement since indices in OBJ files are 1-based
       return Index( indices[0]-1,
                     indices[1]-1,

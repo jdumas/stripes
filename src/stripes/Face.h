@@ -5,7 +5,7 @@
 // Face stores attributes associated with a mesh edge.  The iterator he points
 // to one of its associated halfedges.  (See the documentation for a more
 // in-depth discussion of the halfedge data structure.)
-// 
+//
 
 #ifndef DDG_FACE_H
 #define DDG_FACE_H
@@ -46,7 +46,7 @@ namespace DDG
 
          double paramIndex[2];
          // degree of the parameterization around this triangle, for each
-         // coorinate function (computed by Mesh::assignTextureCoordinates)
+         // coordinate function (computed by Mesh::assignTextureCoordinates)
 
          double area( void ) const;
          // returns the triangle area

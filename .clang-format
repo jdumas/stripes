@@ -1,0 +1,10 @@
+﻿---
+BasedOnStyle: Google
+BinPackParameters: false
+BreakBeforeBraces: Stroustrup
+IndentWidth: '4'
+FixNamespaceComments: true
+ColumnLimit:     100
+SortIncludes: false
+AccessModifierOffset: -4
+...

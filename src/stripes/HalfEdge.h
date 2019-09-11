@@ -4,7 +4,7 @@
 //
 // HalfEdge is used to define mesh connectivity.  (See the documentation for a
 // more in-depth discussion of the halfedge data structure.)
-// 
+//
 
 #ifndef DDG_HALFEDGE_H
 #define DDG_HALFEDGE_H
@@ -48,9 +48,6 @@ namespace DDG
          // true if this halfedge is contained in a boundary
          // loop; false otherwise
 
-         double height;
-         // used to define embedding
-
          Complex texcoord;
 #ifdef SP_FLAT_TORUS
          Complex origTexCoord;
@@ -61,9 +58,6 @@ namespace DDG
          double angularCoordinate;
          // angle of this half edge relative to this->vertex->he,
          // normalized by 2π times the angle sum around this->vertex
-
-         Complex connectionCoefficient;
-         // apples *half* the rotation from this->vertex to this->flip->vertex
 
          Vector vector( void ) const;
          // returns the vector along this halfedge

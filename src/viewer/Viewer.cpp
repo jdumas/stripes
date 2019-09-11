@@ -599,7 +599,7 @@ namespace DDG
                omegaJK =  cJK * omegaJK;
             }
 
-            // From here, everthing gets computed as usual.
+            // From here, everything gets computed as usual.
             Complex rij( cos(omegaIJ), sin(omegaIJ) );
             Complex rjk( cos(omegaJK), sin(omegaJK) );
             Complex rkl( cos(omegaKL), sin(omegaKL) );
@@ -912,7 +912,7 @@ namespace DDG
    {
       // load an image
       Image image;
-      image.read( "data/GridRedBlue.tga" );
+      image.read( DATA_FOLDER "GridRedBlue.tga" );
       int N = image.width();
 
       if( texture )

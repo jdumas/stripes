@@ -5,13 +5,6 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 include(UseColors)
 include(Warnings)
 
-# Dependencies
-find_package(OpenGL REQUIRED)
-find_package(GLUT REQUIRED)
-find_package(SuiteSparse REQUIRED)
-find_package(Umfpack REQUIRED)
-add_subdirectory(ext/glad)
-
 # Stripe library
 add_library(stripes
 	src/stripes/Complex.cpp
@@ -57,6 +50,7 @@ add_library(stripes
 	src/stripes/Vertex.h
 )
 
+add_library(stripes::stripes ALIAS stripes)
 target_include_directories(stripes PUBLIC src/)
 target_compile_features(stripes PUBLIC cxx_std_17)
 target_compile_definitions(stripes PUBLIC SP_COMPILE_COMMAND_LINE)
@@ -68,13 +62,26 @@ target_compile_definitions(stripes PUBLIC "-DSHADER_FOLDER=\"${SHADER_FOLDER}\""
 set(DATA_FOLDER "${CMAKE_CURRENT_SOURCE_DIR}/data/")
 target_compile_definitions(stripes PUBLIC "-DDATA_FOLDER=\"${DATA_FOLDER}\"")
 
-# Set dependencies
+# Dependencies
+find_package(SuiteSparse REQUIRED)
+find_package(Umfpack REQUIRED)
 target_include_directories(stripes PUBLIC ${CHOLMOD_INCLUDE_DIR})
 target_link_libraries(stripes PUBLIC ${CHOLMOD_LIBRARY})
 target_include_directories(stripes PUBLIC ${SUITESPARSEQR_INCLUDE_DIR})
 target_link_libraries(stripes PUBLIC ${SUITESPARSEQR_LIBRARY})
 target_include_directories(stripes PUBLIC ${UMFPACK_INCLUDES})
 target_link_libraries(stripes PUBLIC ${UMFPACK_LIBRARIES})
+
+# Libigl-style wrapper using Eigen types
+add_library(stripes_wrapper
+	src/wrapper/Stripes.cpp
+	src/wrapper/Stripes.h
+)
+add_library(stripes::wrapper ALIAS stripes_wrapper)
+
+# Dependencies
+find_package(Eigen3 REQUIRED)
+target_link_libraries(stripes_wrapper PUBLIC stripes::stripes Eigen3::Eigen)
 
 # Demo application
 add_executable(StripePatterns
@@ -87,4 +94,14 @@ add_executable(StripePatterns
 	src/viewer/Viewer.h
 )
 
-target_link_libraries(StripePatterns PUBLIC stripes GLUT::GLUT glad::glad OpenGL::GLU)
+# Dependencies
+find_package(OpenGL REQUIRED)
+find_package(GLUT REQUIRED)
+add_subdirectory(ext/glad)
+target_link_libraries(StripePatterns
+	PUBLIC
+		stripes::stripes
+		GLUT::GLUT
+		glad::glad
+		OpenGL::GLU
+)

@@ -5,7 +5,7 @@
 // Vertex stores attributes associated with a mesh edge.  The iterator he
 // points to its "outgoing" halfedge.  (See the documentation for a more
 // in-depth discussion of the halfedge data structure.)
-// 
+//
 
 #ifndef DDG_VERTEX_H
 #define DDG_VERTEX_H
@@ -58,9 +58,7 @@ namespace DDG
 
          Complex directionField, oldDirectionField;
          Complex parameterization;
-         Complex embedding;
 
-         double constantValue;
          bool visited;
          // for traversal
 
