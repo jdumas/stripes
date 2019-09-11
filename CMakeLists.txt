@@ -1,9 +1,20 @@
+################################################################################
+
 cmake_minimum_required(VERSION 3.11)
 project(stripes)
+
+get_directory_property(HAS_PARENT PARENT_DIRECTORY)
+if(HAS_PARENT)
+	set(STRIPES_TOPLEVEL_PROJECT OFF)
+else()
+	set(STRIPES_TOPLEVEL_PROJECT ON)
+endif()
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 include(UseColors)
 include(Warnings)
+
+################################################################################
 
 # Stripe library
 add_library(stripes
@@ -72,36 +83,46 @@ target_link_libraries(stripes PUBLIC ${SUITESPARSEQR_LIBRARY})
 target_include_directories(stripes PUBLIC ${UMFPACK_INCLUDES})
 target_link_libraries(stripes PUBLIC ${UMFPACK_LIBRARIES})
 
-# Libigl-style wrapper using Eigen types
-add_library(stripes_wrapper
-	src/wrapper/Stripes.cpp
-	src/wrapper/Stripes.h
-)
-add_library(stripes::wrapper ALIAS stripes_wrapper)
+################################################################################
 
-# Dependencies
-find_package(Eigen3 REQUIRED)
-target_link_libraries(stripes_wrapper PUBLIC stripes::stripes Eigen3::Eigen)
+find_package(Eigen3 QUIET NO_MODULE)
+if(TARGET Eigen3::Eigen)
+	# Libigl-style wrapper using Eigen types
+	add_library(stripes_wrapper
+		src/wrapper/Stripes.cpp
+		src/wrapper/Stripes.h
+	)
+	add_library(stripes::wrapper ALIAS stripes_wrapper)
 
-# Demo application
-add_executable(StripePatterns
-	src/viewer/main.cpp
-	src/viewer/Camera.cpp
-	src/viewer/Camera.h
-	src/viewer/Shader.cpp
-	src/viewer/Shader.h
-	src/viewer/Viewer.cpp
-	src/viewer/Viewer.h
-)
+	# Dependencies
+	target_link_libraries(stripes_wrapper PUBLIC stripes::stripes Eigen3::Eigen)
+else()
+	message(WARNING "Eigen3::Eigen target not available. stripes::wrapper will not be built.")
+endif()
 
-# Dependencies
-find_package(OpenGL REQUIRED)
-find_package(GLUT REQUIRED)
-add_subdirectory(ext/glad)
-target_link_libraries(StripePatterns
-	PUBLIC
-		stripes::stripes
-		GLUT::GLUT
-		glad::glad
-		OpenGL::GLU
-)
+################################################################################
+
+if(STRIPES_TOPLEVEL_PROJECT)
+	# Demo application
+	add_executable(StripePatterns
+		src/viewer/main.cpp
+		src/viewer/Camera.cpp
+		src/viewer/Camera.h
+		src/viewer/Shader.cpp
+		src/viewer/Shader.h
+		src/viewer/Viewer.cpp
+		src/viewer/Viewer.h
+	)
+
+	# Dependencies
+	find_package(OpenGL REQUIRED)
+	find_package(GLUT REQUIRED)
+	add_subdirectory(ext/glad)
+	target_link_libraries(StripePatterns
+		PUBLIC
+			stripes::stripes
+			GLUT::GLUT
+			glad::glad
+			OpenGL::GLU
+	)
+endif()
