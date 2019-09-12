@@ -89,8 +89,8 @@ find_package(Eigen3 QUIET NO_MODULE)
 if(TARGET Eigen3::Eigen)
 	# Libigl-style wrapper using Eigen types
 	add_library(stripes_wrapper
-		src/wrapper/Stripes.cpp
-		src/wrapper/Stripes.h
+		src/stripes/wrapper/Stripes.cpp
+		src/stripes/wrapper/Stripes.h
 	)
 	add_library(stripes::wrapper ALIAS stripes_wrapper)
 
