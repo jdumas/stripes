@@ -20,14 +20,16 @@ namespace DDG {
 /// @param[out] isBorder                #F x 1 array indicating if a face is on the border of the
 ///                                     mesh.
 ///
-void computeStripePatterns(const Eigen::MatrixXd &V,
-                           const Eigen::MatrixXi &F,
-                           const Eigen::MatrixXd &directionField,
-                           double frequency,
-                           int numCoordinateFunctions,
-                           Eigen::VectorXi &branchIndex,
-                           Eigen::MatrixXd &parameterization,
-                           Eigen::MatrixXi &zeroIndex,
-                           std::vector<bool> &isBorder);
+/// @return     0 in case of success.
+///
+int computeStripePatterns(const Eigen::MatrixXd &V,
+                          const Eigen::MatrixXi &F,
+                          const Eigen::MatrixXd &directionField,
+                          double frequency,
+                          int numCoordinateFunctions,
+                          Eigen::VectorXi &branchIndex,
+                          Eigen::MatrixXd &parameterization,
+                          Eigen::MatrixXi &zeroIndex,
+                          std::vector<bool> &isBorder);
 
 }  // namespace DDG

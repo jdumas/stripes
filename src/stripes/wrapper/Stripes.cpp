@@ -6,10 +6,15 @@ namespace DDG {
 
 namespace {
 
-void convertMesh(const Eigen::MatrixXd &V,
-                 const Eigen::MatrixXi &F,
-                 const Eigen::MatrixXd &directionField,
-                 Mesh &mesh)
+class MeshEigen : public Mesh {
+public:
+    int init(const Eigen::MatrixXd &V, const Eigen::MatrixXi &F);
+    void setDirectionField(const Eigen::MatrixXd &D);
+};
+
+// Return 0 for success
+int MeshEigen::init(const Eigen::MatrixXd &V,
+                const Eigen::MatrixXi &F)
 {
     MeshData meshData;
     meshData.positions.reserve(V.rows());
@@ -23,23 +28,32 @@ void convertMesh(const Eigen::MatrixXd &V,
             meshData.indices.back()[lv] = Index(F(i, lv), -1, -1);
         }
     }
-    MeshIO::buildMesh(meshData, mesh);
+    if (auto ret = MeshIO::buildMesh(meshData, *this)) {
+        return ret;
+    }
+    indexElements();
+    initializeSmoothStructure();
+    buildMassMatrix();
 
+    return 0;
+}
+
+void MeshEigen::setDirectionField(const Eigen::MatrixXd &D) {
     // Ignore input direction field for now
-    mesh.computeCurvatureAlignedSection();
+    computeCurvatureAlignedSection();
 }
 
 }  // anonymous namespace
 
-void computeStripePatterns(const Eigen::MatrixXd &V,
-                           const Eigen::MatrixXi &F,
-                           const Eigen::MatrixXd &directionField,
-                           double frequency,
-                           int numCoords,
-                           Eigen::VectorXi &branchIndex,
-                           Eigen::MatrixXd &parameterization,
-                           Eigen::MatrixXi &zeroIndex,
-                           std::vector<bool> &isBorder)
+int computeStripePatterns(const Eigen::MatrixXd &V,
+                          const Eigen::MatrixXi &F,
+                          const Eigen::MatrixXd &directionField,
+                          double frequency,
+                          int numCoords,
+                          Eigen::VectorXi &branchIndex,
+                          Eigen::MatrixXd &parameterization,
+                          Eigen::MatrixXi &zeroIndex,
+                          std::vector<bool> &isBorder)
 {
     assert(V.cols() == 3);
     assert(F.cols() == 3);
@@ -48,8 +62,11 @@ void computeStripePatterns(const Eigen::MatrixXd &V,
     }
 
     // Compute field-aligned parametrization
-    Mesh mesh;
-    convertMesh(V, F, directionField, mesh);
+    MeshEigen mesh;
+    if (auto ret = mesh.init(V, F)) {
+        return ret;
+    }
+    mesh.setDirectionField(directionField);
     mesh.nCoordinateFunctions = 2;
     mesh.lambda = frequency;
     mesh.parameterize();
@@ -90,6 +107,8 @@ void computeStripePatterns(const Eigen::MatrixXd &V,
             he = he->next;
         } while (he != f->he);
     }
+
+    return 0;
 }
 
 }  // namespace DDG
