@@ -46,7 +46,7 @@ void MeshEigen::setDirectionField(const Eigen::MatrixXd &D) {
 }  // anonymous namespace
 
 int computeStripePatterns(const Eigen::MatrixXd &V,
-                          const Eigen::MatrixXi &F,
+                          Eigen::MatrixXi &F,
                           const Eigen::MatrixXd &directionField,
                           double frequency,
                           int numCoords,
@@ -99,6 +99,7 @@ int computeStripePatterns(const Eigen::MatrixXd &V,
         HalfEdgeCIter he = f->he;
         do {
             Complex g = he->texcoord;
+            F(faceIndex, i) = he->vertex->index;
             parameterization(3 * faceIndex + i, 0) = g.re;
             if (numCoords == 2) {
                 parameterization(3 * faceIndex + i, 1) = g.im;
