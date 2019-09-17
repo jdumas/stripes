@@ -16,6 +16,15 @@ include(Warnings)
 
 ################################################################################
 
+find_package(SuiteSparse)
+find_package(Umfpack)
+if(NOT (CHOLMOD_FOUND AND SUITESPARSEQR_FOUND AND UMFPACK_FOUND))
+	message(WARNING "A SuiteSparse component could not be found. stripes::stripes will not be built.")
+	return()
+endif()
+
+################################################################################
+
 # Stripe library
 add_library(stripes
 	src/stripes/Complex.cpp
@@ -74,8 +83,6 @@ set(DATA_FOLDER "${CMAKE_CURRENT_SOURCE_DIR}/data/")
 target_compile_definitions(stripes PUBLIC "-DDATA_FOLDER=\"${DATA_FOLDER}\"")
 
 # Dependencies
-find_package(SuiteSparse REQUIRED)
-find_package(Umfpack REQUIRED)
 target_include_directories(stripes PUBLIC ${CHOLMOD_INCLUDE_DIR})
 target_link_libraries(stripes PUBLIC ${CHOLMOD_LIBRARY})
 target_include_directories(stripes PUBLIC ${SUITESPARSEQR_INCLUDE_DIR})
