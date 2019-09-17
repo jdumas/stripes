@@ -57,8 +57,8 @@ namespace DDG
          void buildRightHandSide( void );
          void computeSolution( void );
 
-         int nEquations;
-         int nVariables;
+         size_t nEquations;
+         size_t nVariables;
          std::vector<LinearPolynomial> currentEquations;
          std::map<Variable*,int> index;
          SparseMatrix<Real> A;

@@ -21,18 +21,18 @@ namespace DDG
    class Image
    {
       public:
-         Image( int width = 0, int height = 0 );
+         Image( size_t width = 0, size_t height = 0 );
          // constructs image with specified width and height
 
-         float& operator()( int x, int y );
-         const float& operator()( int x, int y ) const;
+         float& operator()( size_t x, size_t y );
+         const float& operator()( size_t x, size_t y ) const;
          // accesses pixel (x,y)
 
          float sample( float x, float y ) const;
          // samples image at (x,y) using bilinear filtering
 
-         int  width( void ) const;
-         int height( void ) const;
+         size_t  width( void ) const;
+         size_t height( void ) const;
          // returns image dimensions
 
          void read( const char* filename );
@@ -44,10 +44,10 @@ namespace DDG
          // (RGB image with 24 bits per pixel)
 
       protected:
-         void clamp( int& x, int& y ) const;
+         void clamp( size_t& x, size_t& y ) const;
          // clamps coordinates to range [0,w-1] x [0,h-1]
 
-         int w, h;
+         size_t w, h;
          // width and height
 
          std::vector<float> pixels;

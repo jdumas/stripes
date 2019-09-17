@@ -38,13 +38,13 @@ namespace DDG
          double fieldIndex( double fieldDegree ) const;
          // returns the degree of the direction field around this triangle
 
-         int index;
+         int index = 0;
          // unique ID in range [0,nF-1]
 
          double singularIndex;
          // index for trivial connection
 
-         double paramIndex[2];
+         double paramIndex[2] = {0};
          // degree of the parameterization around this triangle, for each
          // coordinate function (computed by Mesh::assignTextureCoordinates)
 

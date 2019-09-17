@@ -132,7 +132,7 @@ namespace DDG
       {
          for( unsigned int I = 0; I < f->size(); I++ )
          {
-            int J = (I+1) % f->size();
+            int J = (I+1) % (int) f->size();
             int i = (*f)[I].position;
             int j = (*f)[J].position;
 
@@ -142,9 +142,9 @@ namespace DDG
          }
       }
 
-      int nV = data.positions.size();
-      int nE = edges.size();
-      int nF = data.indices.size();
+      int nV = (int) data.positions.size();
+      int nE = (int) edges.size();
+      int nF = (int) data.indices.size();
       int nHE = 2*nE;
       int chi = nV - nE + nF;
       int nB = max( 0, 2 - chi ); // (conservative approximation of number of boundary cycles)
@@ -157,7 +157,7 @@ namespace DDG
       mesh.halfedges.reserve( nHE );
       mesh.vertices.reserve( nV );
       mesh.edges.reserve( nE );
-      mesh.faces.reserve( nF + nB );
+      mesh.faces.reserve( size_t(nF) + size_t(nB) );
    }
 
    extern vector<HalfEdge> isolated; // all isolated vertices point to isolated.begin()
@@ -173,13 +173,13 @@ namespace DDG
 
       // allocate a vertex for each position in the data and construct
       // a map from vertex indices to vertex pointers
-      int nT = data.tangents.size();
-      for( unsigned int i = 0; i < data.positions.size(); i++ )
+      size_t nT = data.tangents.size();
+      for( size_t i = 0; i < data.positions.size(); i++ )
       {
          VertexIter newVertex = mesh.vertices.insert( mesh.vertices.end(), Vertex() );
          newVertex->position = data.positions[ i ];
          newVertex->he = isolated.begin();
-         indexToVertex[ i ] = newVertex;
+         indexToVertex[ (int) i ] = newVertex;
 
          if( i < nT )
          {
@@ -194,7 +194,7 @@ namespace DDG
                                                      f != data.indices.end();
                                                      f ++ )
       {
-         int N = f->size();
+         int N = (int) f->size();
 
          // print an error if the face is degenerate
          if( N < 3 )
@@ -333,8 +333,8 @@ namespace DDG
             } while( he != currentHE );
 
             // link together the cycle of boundary halfedges
-            unsigned int N = boundaryCycle.size();
-            for( unsigned int i = 0; i < N; i++ )
+            size_t N = boundaryCycle.size();
+            for( size_t i = 0; i < N; i++ )
             {
                boundaryCycle[ i ]->next = boundaryCycle[ (i+N-1)%N ];
                hasFlipEdge[ boundaryCycle[i] ] = true;

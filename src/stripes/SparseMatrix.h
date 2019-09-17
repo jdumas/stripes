@@ -37,6 +37,7 @@
 #include <cholmod.h>
 #include <vector>
 #include <map>
+#include <iostream>
 #include "Types.h"
 
 namespace DDG
@@ -45,7 +46,7 @@ namespace DDG
    class SparseMatrix
    {
       public:
-         SparseMatrix( int m = 0, int n = 1 );
+         SparseMatrix( size_t m = 0, size_t n = 1 );
          // initialize an mxn matrix
 
          SparseMatrix( const SparseMatrix<T>& B );
@@ -61,7 +62,7 @@ namespace DDG
          // copies a cholmod_sparse* into a SparseMatrix;
          // takes responsibility for deallocating B
 
-         void resize( int m, int n );
+         void resize( size_t m, size_t n);
          // clears and resizes to mxn matrix
 
          SparseMatrix<T> transpose( void ) const;
@@ -94,10 +95,10 @@ namespace DDG
          SparseMatrix<T> operator-( const SparseMatrix<T>& B ) const;
          // returns difference of this matrix with B
 
-         int nRows( void ) const;
+         size_t nRows( void ) const;
          // returns the number of rows
 
-         int nColumns( void ) const;
+         size_t nColumns( void ) const;
          // returns the number of columns
 
          int length( void ) const;
@@ -141,7 +142,7 @@ namespace DDG
          // adds c times the identity matrix to this matrix
 
       protected:
-         int m, n;
+         size_t m, n;
          EntryMap data;
          cholmod_sparse* cData;
 

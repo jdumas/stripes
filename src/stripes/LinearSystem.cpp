@@ -98,7 +98,7 @@ namespace DDG
             // before, assign it a unique index
             if( j == index.end() )
             {
-               index[ t->first ] = nVariables;
+               index[ t->first ] = (int) nVariables;
                nVariables++;
             }
          }

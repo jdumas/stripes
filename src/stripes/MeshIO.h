@@ -27,9 +27,6 @@ namespace DDG
    class Index
    {
       public:
-         Index( void )
-         {}
-
          Index( int p, int t, int n )
          : position( p ), texcoord( t ), normal( n )
          {}

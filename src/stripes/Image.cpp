@@ -1,23 +1,24 @@
 #include <cmath>
 #include <fstream>
 #include <iostream>
+#include <algorithm>
 using namespace std;
 
 #include "Image.h"
 
 namespace DDG
 {
-   Image :: Image( int width, int height )
+   Image :: Image( size_t width, size_t height )
    : w( width ), h( height ), pixels( w*h*3 )
    {}
 
-   float& Image :: operator()( int x, int y )
+   float& Image :: operator()( size_t x, size_t y )
    // accesses pixel (x,y)
    {
       return pixels[ x + y*w ];
    }
 
-   const float& Image :: operator()( int x, int y ) const
+   const float& Image :: operator()( size_t x, size_t y ) const
    // accesses pixel (x,y)
    {
       return pixels[ x + y*w ];
@@ -29,12 +30,12 @@ namespace DDG
       const Image& I( *this );
       float ax = x - floor( x );
       float ay = y - floor( y );
-      float bx = 1. - ax;
-      float by = 1. - ay;
-      int x0 = (int) floor( x );
-      int y0 = (int) floor( y );
-      int x1 = x0 + 1;
-      int y1 = y0 + 1;
+      float bx = 1.f - ax;
+      float by = 1.f - ay;
+      size_t x0 = (size_t) floor( x );
+      size_t y0 = (size_t) floor( y );
+      size_t x1 = x0 + 1;
+      size_t y1 = y0 + 1;
 
       clamp( x0, y0 );
       clamp( x1, y1 );
@@ -43,13 +44,13 @@ namespace DDG
              ay * ( bx * I(x0,y1) + ax * I(x1,y1) ) ;
    }
 
-   int Image :: width( void ) const
+   size_t Image :: width( void ) const
    // returns image width
    {
       return w;
    }
 
-   int Image :: height( void ) const
+   size_t Image :: height( void ) const
    // returns image height
    {
       return h;
@@ -127,7 +128,7 @@ namespace DDG
       }
 
       // read pixel data
-      int n = w*h*header.bitsPerPixel/8;
+      size_t n = w*h*header.bitsPerPixel/8;
       vector<unsigned char> pixelData( n );
       in.read( (char*) &pixelData[0], n );
 
@@ -135,12 +136,12 @@ namespace DDG
       pixels.resize( n );
       for( int i = 0; i < n; i++ )
       {
-         pixels[i] = (double) pixelData[i] / 255.;
+         pixels[i] = (unsigned char) ((double) pixelData[i] / 255.);
       }
 
       if( header.bitsPerPixel == 24 )
       {
-         for( int i = 0; i < n/3; i++ )
+         for( size_t i = 0; i < n/3; i++ )
          {
             swap( pixels[i*3+0], pixels[i*3+2] );
          }
@@ -168,8 +169,8 @@ namespace DDG
       header.colorMapEntrySize = 0;
       header.xOrigin = 0;
       header.yOrigin = 0;
-      header.width = w;
-      header.height = h;
+      header.width = (short) w;
+      header.height = (short) h;
       header.bitsPerPixel = 24;
       header.imageSpecification = 0;
 
@@ -198,11 +199,11 @@ namespace DDG
       out.write( (char*) &pixelData[0], w*h*3 );
    }
 
-   void Image :: clamp( int& x, int& y ) const
+   void Image :: clamp( size_t& x, size_t& y ) const
    // clamps coordinates to range [0,w-1] x [0,h-1]
    {
-      x = max( 0, min( w-1, x ));
-      y = max( 0, min( h-1, y ));
+      x = std::max( 0ull, std::min( w-1, x ));
+      y = std::max( 0ull, std::min( h-1, y ));
    }
 }
 

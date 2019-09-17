@@ -169,9 +169,9 @@ namespace DDG
 
    int Mesh :: eulerCharacteristic( void ) const
    {
-      int nV = vertices.size();
-      int nE = edges.size();
-      int nF = faces.size();
+      int nV = (int) vertices.size();
+      int nE = (int) edges.size();
+      int nF = (int) faces.size();
 
       return nV - nE + nF;
    }
@@ -210,7 +210,7 @@ namespace DDG
 
    void Mesh :: buildMassMatrix( void )
    {
-      int nV = vertices.size();
+      size_t nV = vertices.size();
       massMatrix.resize( nV, nV );
       realMassMatrix.resize( 2*nV, 2*nV );
 
@@ -230,7 +230,7 @@ namespace DDG
       double k = fieldDegree;
 
       SparseMatrix<Complex>& A( energyMatrix );
-      int nV = vertices.size();
+      size_t nV = vertices.size();
       A.resize( nV, nV );
       for( FaceCIter f = faces.begin(); f != faces.end(); f++ )
       {
@@ -269,7 +269,7 @@ namespace DDG
 
    void Mesh :: buildDualLaplacian( void )
    {
-      int nF = faces.size();
+      size_t nF = faces.size();
       SparseMatrix<Real>& L( dualLaplacian );
       L = SparseMatrix<Real>( nF, nF );
 
@@ -304,9 +304,9 @@ namespace DDG
 
       // solve for scalar potential
       buildDualLaplacian();
-      int nV = vertices.size();
-      int nE = edges.size();
-      int nF = faces.size();
+      int nV = (int) vertices.size();
+      int nE = (int) edges.size();
+      int nF = (int) faces.size();
       int chi = nV - nE + nF;
       DenseMatrix<Real> Omega( nF );
       double indexSum = 0.;
@@ -410,7 +410,7 @@ namespace DDG
 
       buildFieldEnergy();
 
-      int nV = vertices.size();
+      size_t nV = vertices.size();
       DenseMatrix<Complex> groundState( nV );
       smallestEigPositiveDefinite( energyMatrix, massMatrix, groundState );
 
@@ -426,7 +426,7 @@ namespace DDG
 
       buildFieldEnergy();
 
-      int nV = vertices.size();
+      size_t nV = vertices.size();
       DenseMatrix<Complex> principalField( nV );
       DenseMatrix<Complex> smoothedField( nV );
 
@@ -480,7 +480,7 @@ namespace DDG
 
    void Mesh :: buildDirichletEnergy( SparseMatrix<Real>& A )
    {
-      int nV = vertices.size();
+      size_t nV = vertices.size();
       A.resize( 2*nV, 2*nV );
 
       for( EdgeIter e = edges.begin(); e != edges.end(); e++ )
@@ -551,7 +551,7 @@ namespace DDG
 
    void Mesh :: buildEnergy( SparseMatrix<Real>& A, int coordinate )
    {
-      int nV = vertices.size();
+      size_t nV = vertices.size();
       A.resize( 2*nV, 2*nV );
 
       for( EdgeIter e = edges.begin(); e != edges.end(); e++ )
@@ -641,8 +641,8 @@ namespace DDG
       SparseMatrix<Real> A;
       buildEnergy( A, coordinate );
 
-      int nV = vertices.size();
-      DenseMatrix<Real> groundState( 2.*nV );
+      size_t nV = vertices.size();
+      DenseMatrix<Real> groundState( 2*nV );
       smallestEigPositiveDefinite( A, realMassMatrix, groundState );
 
       for( VertexIter v = vertices.begin(); v != vertices.end(); v++ )
@@ -661,7 +661,7 @@ namespace DDG
       double mu = inner( A*x, x );
 
       // evaluate quartic part of energy
-      int nV = vertices.size();
+      int nV = (int) vertices.size();
       for( VertexCIter v = vertices.begin(); v != vertices.end(); v++ )
       {
          if( v->index != nV-1 )

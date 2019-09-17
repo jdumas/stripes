@@ -15,7 +15,7 @@ namespace DDG
    extern LinearContext context;
 
    template <class T>
-   DenseMatrix<T> :: DenseMatrix( int m_, int n_ )
+   DenseMatrix<T> :: DenseMatrix( size_t m_, size_t n_ )
    // initialize an mxn matrix
    : m( m_ ),
      n( n_ ),
@@ -70,7 +70,7 @@ namespace DDG
    }
 
    template <class T>
-   void DenseMatrix<T>::resize( int m_, int n_ )
+   void DenseMatrix<T>::resize(size_t m_, size_t n_)
    {
       if( cData != NULL )
       {
@@ -246,14 +246,14 @@ namespace DDG
    }
 
    template <class T>
-   int DenseMatrix<T> :: nRows( void ) const
+   size_t DenseMatrix<T> :: nRows( void ) const
    // returns the number of rows
    {
       return m;
    }
 
    template <class T>
-   int DenseMatrix<T> :: nColumns( void ) const
+   size_t DenseMatrix<T> :: nColumns( void ) const
    // returns the number of columns
    {
       return n;

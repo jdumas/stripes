@@ -26,9 +26,9 @@ namespace DDG
       for( int col = 0; col < n; col++ )
       {
          // iterate over nonzero rows
-         for( int k = jc[col]; k < jc[col+1]; k++ )
+         for( auto k = jc[col]; k < jc[col+1]; k++ )
          {
-            int row = ir[k];
+            int row = (int) ir[k];
 
             (*this)( row, col ) = pr[k];
          }
@@ -61,9 +61,9 @@ namespace DDG
       for( int col = 0; col < n; col++ )
       {
          // iterate over nonzero rows
-         for( int k = jc[col]; k < jc[col+1]; k++ )
+         for( auto k = jc[col]; k < jc[col+1]; k++ )
          {
-            int row = ir[k];
+            int row = (int) ir[k];
 
             (*this)( row, col ) = Complex( pr[k*2+0], pr[k*2+1] );
          }
@@ -102,7 +102,7 @@ namespace DDG
    template <>
    void SparseMatrix<Real> :: allocateSparse( void )
    {
-      int nzmax = data.size();
+      auto nzmax = data.size();
       int sorted = true;
       int packed = true;
       int stype = 0;
@@ -112,7 +112,7 @@ namespace DDG
    template <>
    void SparseMatrix<Complex> :: allocateSparse( void )
    {
-      int nzmax = data.size();
+      auto nzmax = data.size();
       int sorted = true;
       int packed = true;
       int stype = 0;
@@ -122,7 +122,7 @@ namespace DDG
    template <>
    void SparseMatrix<Quaternion> :: allocateSparse( void )
    {
-      int nzmax = data.size();
+      auto nzmax = data.size();
       int sorted = true;
       int packed = true;
       int stype = 0;
@@ -209,7 +209,7 @@ namespace DDG
       int t0 = clock();
 #endif
       cholmod_sparse* Ac = A.to_cholmod();
-      int n = Ac->nrow;
+      auto n = Ac->nrow;
       SuiteSparse_long* Ap = (SuiteSparse_long*) Ac->p;
       SuiteSparse_long* Ai = (SuiteSparse_long*) Ac->i;
       double*  Ax =  (double*) Ac->x;

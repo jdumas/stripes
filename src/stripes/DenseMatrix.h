@@ -34,6 +34,7 @@
 #include "Types.h"
 
 #include <vector>
+#include <iostream>
 
 namespace DDG
 {
@@ -48,7 +49,7 @@ namespace DDG
    class DenseMatrix
    {
       public:
-         DenseMatrix( int m = 0, int n = 1 );
+         DenseMatrix( size_t m = 0, size_t n = 1 );
          // initialize an mxn matrix (specifying just m yields a column vector)
 
          DenseMatrix( const DenseMatrix<T>& A );
@@ -63,10 +64,10 @@ namespace DDG
          SparseMatrix<T> sparse( void );
          // converts to a sparse matrix
 
-         int nRows( void ) const;
+         size_t nRows( void ) const;
          // returns the number of rows
 
-         int nColumns( void ) const;
+         size_t nColumns( void ) const;
          // returns the number of columns
 
          int length( void ) const;
@@ -113,7 +114,7 @@ namespace DDG
          DenseMatrix<T> operator-( void ) const;
          // returns additive inverse of this matrix
 
-         void resize( int m, int n = 1 );
+         void resize( size_t m, size_t n = 1 );
          // clears and resizes to mxn matrix
 
          cholmod_dense* to_cholmod( void );
@@ -137,7 +138,7 @@ namespace DDG
          // replaces entries with uniformly distributed random real numbers in the interval [-1,1]
 
       protected:
-         int m, n;
+         size_t m, n;
          std::vector<T> data;
          cholmod_dense* cData;
    };

@@ -3,6 +3,7 @@
 
 #include <cmath>
 #include <random>
+#include <ctime>
 #include "Utility.h"
 #include "Complex.h"
 
@@ -38,7 +39,7 @@ namespace DDG
 
    inline double seconds( int t0, int t1 )
    {
-      return (double)(t1-t0) / (double) CLOCKS_PER_SEC;
+      return (double(t1)-double(t0)) / (double) CLOCKS_PER_SEC;
    }
 
    inline double angle( const Vector& u, const Vector& v )

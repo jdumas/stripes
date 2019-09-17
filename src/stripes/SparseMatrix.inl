@@ -22,7 +22,7 @@ namespace DDG
    // number of iterations used to solve eigenvalue problems
 
    template <class T>
-   SparseMatrix<T> :: SparseMatrix( int m_, int n_ )
+   SparseMatrix<T> :: SparseMatrix( size_t m_, size_t n_ )
    // initialize an mxn matrix
    : m( m_ ),
      n( n_ ),
@@ -280,7 +280,7 @@ namespace DDG
    }
 
    template <class T>
-   void SparseMatrix<T> :: resize( int m_, int n_ )
+   void SparseMatrix<T>::resize( size_t m_, size_t n_)
    {
       m = m_;
       n = n_;
@@ -289,14 +289,14 @@ namespace DDG
    }
 
    template <class T>
-   int SparseMatrix<T> :: nRows( void ) const
+   size_t SparseMatrix<T> :: nRows( void ) const
    // returns the number of rows
    {
       return m;
    }
 
    template <class T>
-   int SparseMatrix<T> :: nColumns( void ) const
+   size_t SparseMatrix<T> :: nColumns( void ) const
    // returns the number of columns
    {
       return n;

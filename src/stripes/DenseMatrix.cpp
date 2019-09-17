@@ -12,7 +12,7 @@ namespace DDG
          cData = NULL;
       }
 
-      int d = m; // leading dimension
+      size_t d = m; // leading dimension
       cData = cholmod_l_allocate_dense( m, n, d, CHOLMOD_REAL, context );
       double* x = (double*) cData->x;
 
@@ -34,7 +34,7 @@ namespace DDG
          cData = NULL;
       }
 
-      int d = m; // leading dimension
+      size_t d = m; // leading dimension
       cData = cholmod_l_allocate_dense( m, n, d, CHOLMOD_COMPLEX, context );
       double* x = (double*) cData->x;
 
@@ -59,7 +59,7 @@ namespace DDG
          cData = NULL;
       }
 
-      cData = cholmod_l_allocate_dense( m*4, 1, m*4, CHOLMOD_REAL, context );
+      cData = cholmod_l_allocate_dense( size_t(m)*4, 1, size_t(m)*4, CHOLMOD_REAL, context );
       double* x = (double*) cData->x;
 
       for( int i = 0; i < m*n; i++ )

@@ -26,13 +26,13 @@ namespace DDG
          double dihedralAngle( void ) const;
          // returns signed dihedral angle
 
-         int index;
+         int index = 0;
          // unique ID in the range [0,nE-1]
 
          double omega;
          // 1-form guiding parameterization
 
-         bool crossesSheets;
+         bool crossesSheets = false;
          // whether the target coordinate is conjugated
    };
 }

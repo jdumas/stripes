@@ -91,7 +91,7 @@ namespace DDG
          // storage for mesh elements
 
          unsigned int fieldDegree;
-         double fieldOffsetAngle;
+         double fieldOffsetAngle = 0;
          void computeSmoothestSection( void );
          void computeCurvatureAlignedSection( void );
          void computeTrivialSection( void );
@@ -131,7 +131,7 @@ namespace DDG
          SparseMatrix<Complex> energyMatrix;
          SparseMatrix<Real> dualLaplacian;
 
-         int nComputedCoordinateFunctions;
+         int nComputedCoordinateFunctions = 1;
          // keeps track of how many coordinate functions were
          // computed the last time we ran Mesh::parameterize()
    };

@@ -55,7 +55,7 @@ namespace DDG
          // texture coordinates associated with the triangle corner at the
          // "tail" of this halfedge
 
-         double angularCoordinate;
+         double angularCoordinate = 0.;
          // angle of this half edge relative to this->vertex->he,
          // normalized by 2π times the angle sum around this->vertex
 

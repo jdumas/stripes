@@ -76,6 +76,10 @@ target_compile_features(stripes PUBLIC cxx_std_17)
 target_compile_definitions(stripes PUBLIC SP_COMPILE_COMMAND_LINE)
 target_link_libraries(stripes PRIVATE warnings::all)
 
+if(WIN32)
+	target_compile_definitions(stripes PUBLIC _USE_MATH_DEFINES)
+endif()
+
 # Local folders
 set(SHADER_FOLDER "${CMAKE_CURRENT_SOURCE_DIR}/shaders/")
 target_compile_definitions(stripes PUBLIC "-DSHADER_FOLDER=\"${SHADER_FOLDER}\"")
@@ -110,6 +114,13 @@ endif()
 ################################################################################
 
 if(STRIPES_TOPLEVEL_PROJECT)
+	find_package(OpenGL)
+	find_package(GLUT)
+	if(NOT (OPENGL_GLU_FOUND AND GLUT_FOUND))
+		message(WARNING "OpenGL or GLUT could not be found. The viewer will not be built.")
+		return()
+	endif()
+
 	# Demo application
 	add_executable(StripePatterns
 		src/viewer/main.cpp
@@ -122,8 +133,6 @@ if(STRIPES_TOPLEVEL_PROJECT)
 	)
 
 	# Dependencies
-	find_package(OpenGL REQUIRED)
-	find_package(GLUT REQUIRED)
 	add_subdirectory(ext/glad)
 	target_link_libraries(StripePatterns
 		PUBLIC
