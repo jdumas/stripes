@@ -202,8 +202,8 @@ namespace DDG
    void Image :: clamp( size_t& x, size_t& y ) const
    // clamps coordinates to range [0,w-1] x [0,h-1]
    {
-      x = std::max( 0ull, std::min( w-1, x ));
-      y = std::max( 0ull, std::min( h-1, y ));
+      x = std::max( size_t(0), std::min( w-1, x ));
+      y = std::max( size_t(0), std::min( h-1, y ));
    }
 }
 
