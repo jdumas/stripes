@@ -23,9 +23,10 @@ int MeshEigen::init(const Eigen::MatrixXd &V,
     }
     meshData.indices.reserve(F.rows());
     for (int i = 0; i < F.rows(); ++i) {
-        meshData.indices.emplace_back(F.cols());
+        meshData.indices.emplace_back();
+        meshData.indices.back().reserve(F.cols());
         for (int lv = 0; lv < F.cols(); ++lv) {
-            meshData.indices.back()[lv] = Index(F(i, lv), -1, -1);
+            meshData.indices.back().emplace_back(F(i, lv), -1, -1);
         }
     }
     if (auto ret = MeshIO::buildMesh(meshData, *this)) {
@@ -89,9 +90,9 @@ int computeStripePatterns(const Eigen::MatrixXd &V,
         if (f->isBoundary()) continue;
 
         double k = f->fieldIndex(2.);
-        branchIndex(faceIndex) = k;
+        branchIndex(faceIndex) = (int) k;
         for (int p = 0; p < numCoords; ++p) {
-            zeroIndex(faceIndex, p) = f->paramIndex[p];
+            zeroIndex(faceIndex, p) = (int) f->paramIndex[p];
         }
 
         // We don't do anything special for faces with singularities for now
