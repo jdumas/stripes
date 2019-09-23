@@ -9,7 +9,7 @@ using namespace std;
 
 namespace DDG
 {
-   extern LinearContext context;
+   extern thread_local LinearContext context;
 
    void LinearSystem::clear( void )
    // removes all equations from the system
@@ -48,7 +48,7 @@ namespace DDG
 
          // convert fixed variables to constants
          LinearPolynomial q( p.constantTerm );
-         
+
          for( TermIter t  = p.linearTerms.begin();
                        t != p.linearTerms.end();
                        t ++ )
@@ -138,7 +138,7 @@ namespace DDG
    {
       // solve linear system Ax=b
       x = SuiteSparseQR<double>( A.to_cholmod(), b.to_cholmod(), context );
-      
+
       // put solution values in variables
       for( IndexIter i  = index.begin();
                      i != index.end();

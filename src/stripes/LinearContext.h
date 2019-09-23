@@ -8,7 +8,7 @@
 // is shared by all instances of DenseMatrix, SparseMatrix, and LinearSystem.
 // In other words, you shouldn't have to instantiate LinearContext yourself
 // unless you're doing something really fancy!
-// 
+//
 
 #ifndef DDG_LINEARSOLVERCONTEXT
 #define DDG_LINEARSOLVERCONTEXT

@@ -16,7 +16,7 @@
 
 namespace DDG
 {
-   extern LinearContext context;
+   extern thread_local LinearContext context;
 
    const int maxEigIter = 20;
    // number of iterations used to solve eigenvalue problems

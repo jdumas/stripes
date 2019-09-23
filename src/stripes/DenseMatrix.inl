@@ -12,7 +12,7 @@
 
 namespace DDG
 {
-   extern LinearContext context;
+   extern thread_local LinearContext context;
 
    template <class T>
    DenseMatrix<T> :: DenseMatrix( size_t m_, size_t n_ )
