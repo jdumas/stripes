@@ -3,7 +3,7 @@
 namespace DDG
 {
    // global context for linear solvers
-   LinearContext context;
+   thread_local LinearContext context;
 
    LinearContext :: LinearContext( void )
    // constructor
