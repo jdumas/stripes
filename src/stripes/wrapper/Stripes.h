@@ -11,8 +11,8 @@ namespace DDG {
 /// @param[in]     V                       #V x 3 input mesh vertices.
 /// @param[in,out] F                       #F x 3 input mesh faces. Facet may be reordered by the
 ///                                        algorithm.
-/// @param[in]     directionField          #V x 3 input direction field. If empty, compute a
-///                                        curvature aligned direction field.
+/// @param[in]     theta                   Rotate input field (principal curvature) by given angle
+///                                        in radian.
 /// @param[in]     frequency               Frequency of output stripes.
 /// @param[in]     numCoordinateFunctions  Number of parametrization to compute (D=1 or 2).
 /// @param[out]    branchIndex             #F x 1 branch index of each parametrization. A zero
@@ -21,13 +21,13 @@ namespace DDG {
 /// @param[out]    zeroIndex               #F x D zero index of each parametrization.
 /// @param[out]    isBorder                #F x 1 array indicating if a face is on the border of the
 ///                                        mesh.
-/// @param[out]    error                   Error message in case of failure.
+/// @param[out]    error                   Error message in case of failure. direction field.
 ///
 /// @return        0 in case of success.
 ///
 int computeStripePatterns(const Eigen::MatrixXd &V,
                           Eigen::MatrixXi &F,
-                          const Eigen::MatrixXd &directionField,
+                          double theta,
                           double frequency,
                           int numCoordinateFunctions,
                           Eigen::VectorXi &branchIndex,

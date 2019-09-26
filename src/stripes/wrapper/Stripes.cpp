@@ -9,7 +9,7 @@ namespace {
 class MeshEigen : public Mesh {
 public:
     int init(const Eigen::MatrixXd &V, const Eigen::MatrixXi &F);
-    void setDirectionField(const Eigen::MatrixXd &D);
+    void setDirectionField(double theta);
 };
 
 // Return 0 for success
@@ -38,17 +38,21 @@ int MeshEigen::init(const Eigen::MatrixXd &V, const Eigen::MatrixXi &F)
     return 0;
 }
 
-void MeshEigen::setDirectionField(const Eigen::MatrixXd &D)
+void MeshEigen::setDirectionField(double theta)
 {
-    // Ignore input direction field for now
+    // Use curvature field for now
     computeCurvatureAlignedSection();
+    Complex z(cos(theta), sin(theta));
+    for (VertexIter v = vertices.begin(); v != vertices.end(); v++) {
+        v->directionField *= z;
+    }
 }
 
 }  // anonymous namespace
 
 int computeStripePatterns(const Eigen::MatrixXd &V,
                           Eigen::MatrixXi &F,
-                          const Eigen::MatrixXd &directionField,
+                          double theta,
                           double frequency,
                           int numCoords,
                           Eigen::VectorXi &branchIndex,
@@ -68,7 +72,7 @@ int computeStripePatterns(const Eigen::MatrixXd &V,
     if (auto ret = mesh.init(V, F)) {
         return ret;
     }
-    mesh.setDirectionField(directionField);
+    mesh.setDirectionField(theta);
     for (VertexIter v = mesh.vertices.begin(); v != mesh.vertices.end(); v++) {
         auto z = v->directionField;
         if (!(std::isfinite(z.re) && std::isfinite(z.im))) {
