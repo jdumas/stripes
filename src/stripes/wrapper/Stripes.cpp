@@ -114,7 +114,6 @@ int computeStripePatterns(const Eigen::MatrixXd &V,
             Complex g = he->texcoord;
             F(faceIndex, i) = he->vertex->index;
             parameterization(3 * faceIndex + i, 0) = g.re;
-            std::cout << g.re << std::endl;
             if (numCoords == 2) {
                 parameterization(3 * faceIndex + i, 1) = g.im;
             }
