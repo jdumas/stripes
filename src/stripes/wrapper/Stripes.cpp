@@ -13,8 +13,7 @@ public:
 };
 
 // Return 0 for success
-int MeshEigen::init(const Eigen::MatrixXd &V,
-                const Eigen::MatrixXi &F)
+int MeshEigen::init(const Eigen::MatrixXd &V, const Eigen::MatrixXi &F)
 {
     MeshData meshData;
     meshData.positions.reserve(V.rows());
@@ -39,7 +38,8 @@ int MeshEigen::init(const Eigen::MatrixXd &V,
     return 0;
 }
 
-void MeshEigen::setDirectionField(const Eigen::MatrixXd &D) {
+void MeshEigen::setDirectionField(const Eigen::MatrixXd &D)
+{
     // Ignore input direction field for now
     computeCurvatureAlignedSection();
 }
@@ -54,7 +54,8 @@ int computeStripePatterns(const Eigen::MatrixXd &V,
                           Eigen::VectorXi &branchIndex,
                           Eigen::MatrixXd &parameterization,
                           Eigen::MatrixXi &zeroIndex,
-                          std::vector<bool> &isBorder)
+                          std::vector<bool> &isBorder,
+                          std::string *error)
 {
     assert(V.cols() == 3);
     assert(F.cols() == 3);
@@ -68,6 +69,17 @@ int computeStripePatterns(const Eigen::MatrixXd &V,
         return ret;
     }
     mesh.setDirectionField(directionField);
+    for (VertexIter v = mesh.vertices.begin(); v != mesh.vertices.end(); v++) {
+        auto z = v->directionField;
+        if (!(std::isfinite(z.re) && std::isfinite(z.im))) {
+            if (error) {
+                *error =
+                    "Direction field has NaN or infinite values. "
+                    "Make sure the input mesh is clean of isolated or non-manifold vertices.";
+            }
+            return -1;
+        }
+    }
     mesh.nCoordinateFunctions = 2;
     mesh.lambda = frequency;
     mesh.parameterize();
@@ -90,9 +102,9 @@ int computeStripePatterns(const Eigen::MatrixXd &V,
         if (f->isBoundary()) continue;
 
         double k = f->fieldIndex(2.);
-        branchIndex(faceIndex) = (int) k;
+        branchIndex(faceIndex) = (int)k;
         for (int p = 0; p < numCoords; ++p) {
-            zeroIndex(faceIndex, p) = (int) f->paramIndex[p];
+            zeroIndex(faceIndex, p) = (int)f->paramIndex[p];
         }
 
         // We don't do anything special for faces with singularities for now
@@ -102,6 +114,7 @@ int computeStripePatterns(const Eigen::MatrixXd &V,
             Complex g = he->texcoord;
             F(faceIndex, i) = he->vertex->index;
             parameterization(3 * faceIndex + i, 0) = g.re;
+            std::cout << g.re << std::endl;
             if (numCoords == 2) {
                 parameterization(3 * faceIndex + i, 1) = g.im;
             }

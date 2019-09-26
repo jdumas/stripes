@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Eigen/Dense>
+#include <string>
 
 namespace DDG {
 
@@ -20,6 +21,7 @@ namespace DDG {
 /// @param[out]    zeroIndex               #F x D zero index of each parametrization.
 /// @param[out]    isBorder                #F x 1 array indicating if a face is on the border of the
 ///                                        mesh.
+/// @param[out]    error                   Error message in case of failure.
 ///
 /// @return        0 in case of success.
 ///
@@ -31,6 +33,7 @@ int computeStripePatterns(const Eigen::MatrixXd &V,
                           Eigen::VectorXi &branchIndex,
                           Eigen::MatrixXd &parameterization,
                           Eigen::MatrixXi &zeroIndex,
-                          std::vector<bool> &isBorder);
+                          std::vector<bool> &isBorder,
+                          std::string *error = nullptr);
 
 }  // namespace DDG
