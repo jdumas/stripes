@@ -9,7 +9,7 @@ namespace {
 class MeshEigen : public Mesh {
 public:
     int init(const Eigen::MatrixXd &V, const Eigen::MatrixXi &F);
-    void setDirectionField(double theta);
+    void setDirectionField(bool useSmoothestField, double theta);
 };
 
 // Return 0 for success
@@ -38,10 +38,14 @@ int MeshEigen::init(const Eigen::MatrixXd &V, const Eigen::MatrixXi &F)
     return 0;
 }
 
-void MeshEigen::setDirectionField(double theta)
+void MeshEigen::setDirectionField(bool useSmoothestField, double theta)
 {
-    // Use curvature field for now
-    computeCurvatureAlignedSection();
+    if (useSmoothestField) {
+        computeSmoothestSection();
+    }
+    else {
+        computeCurvatureAlignedSection();
+    }
     Complex z(cos(theta), sin(theta));
     for (VertexIter v = vertices.begin(); v != vertices.end(); v++) {
         v->directionField *= z;
@@ -59,6 +63,7 @@ int computeStripePatterns(const Eigen::MatrixXd &V,
                           Eigen::MatrixXd &parameterization,
                           Eigen::MatrixXi &zeroIndex,
                           std::vector<bool> &isBorder,
+                          bool useSmoothestField,
                           std::string *error)
 {
     assert(V.cols() == 3);
@@ -72,7 +77,7 @@ int computeStripePatterns(const Eigen::MatrixXd &V,
     if (auto ret = mesh.init(V, F)) {
         return ret;
     }
-    mesh.setDirectionField(theta);
+    mesh.setDirectionField(useSmoothestField, theta);
     for (VertexIter v = mesh.vertices.begin(); v != mesh.vertices.end(); v++) {
         auto z = v->directionField;
         if (!(std::isfinite(z.re) && std::isfinite(z.im))) {
