@@ -1,5 +1,5 @@
 ################################################################################
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.11)
 
 include("cmake/HunterGate.cmake")
 HunterGate(
@@ -10,11 +10,6 @@ HunterGate(
 ################################################################################
 
 project(stripes)
-
-if(POLICY CMP0091)
-	cmake_policy(SET CMP0091 NEW)
-endif()
-set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
 get_directory_property(HAS_PARENT PARENT_DIRECTORY)
 if(HAS_PARENT)
@@ -30,7 +25,7 @@ include(Warnings)
 ################################################################################
 
 # Stripe library
-add_library(stripes
+add_library(stripes STATIC
 	src/stripes/Complex.cpp
 	src/stripes/Complex.h
 	src/stripes/DenseMatrix.cpp
@@ -91,6 +86,10 @@ set(DATA_FOLDER "${CMAKE_CURRENT_SOURCE_DIR}/data/")
 target_compile_definitions(stripes PUBLIC "-DDATA_FOLDER=\"${DATA_FOLDER}\"")
 
 # Dependencies
+if(WIN32)
+	# Force building SuiteSparse with /MT or /MTd
+	set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/cmake/vs-mt.cmake)
+endif()
 hunter_add_package(SuiteSparse)
 find_package(SuiteSparse CONFIG REQUIRED)
 target_link_libraries(stripes PUBLIC SuiteSparse::cholmod SuiteSparse::umfpack SuiteSparse::spqr)
