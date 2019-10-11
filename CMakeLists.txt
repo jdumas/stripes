@@ -1,7 +1,20 @@
 ################################################################################
+cmake_minimum_required(VERSION 3.15)
 
-cmake_minimum_required(VERSION 3.11)
+include("cmake/HunterGate.cmake")
+HunterGate(
+	URL "https://github.com/cpp-pm/hunter/archive/v0.23.219.tar.gz"
+	SHA1 "9cf34f61c8d34cfc2b1396a63aaaedaa5e09441e"
+)
+
+################################################################################
+
 project(stripes)
+
+if(POLICY CMP0091)
+	cmake_policy(SET CMP0091 NEW)
+endif()
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
 get_directory_property(HAS_PARENT PARENT_DIRECTORY)
 if(HAS_PARENT)
@@ -13,15 +26,6 @@ endif()
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 include(UseColors)
 include(Warnings)
-
-################################################################################
-
-find_package(SuiteSparse)
-find_package(Umfpack)
-if(NOT (CHOLMOD_FOUND AND SUITESPARSEQR_FOUND AND UMFPACK_FOUND))
-	message(WARNING "A SuiteSparse component could not be found. stripes::stripes will not be built.")
-	return()
-endif()
 
 ################################################################################
 
@@ -87,12 +91,9 @@ set(DATA_FOLDER "${CMAKE_CURRENT_SOURCE_DIR}/data/")
 target_compile_definitions(stripes PUBLIC "-DDATA_FOLDER=\"${DATA_FOLDER}\"")
 
 # Dependencies
-target_include_directories(stripes PUBLIC ${CHOLMOD_INCLUDE_DIR})
-target_link_libraries(stripes PUBLIC ${CHOLMOD_LIBRARY})
-target_include_directories(stripes PUBLIC ${SUITESPARSEQR_INCLUDE_DIR})
-target_link_libraries(stripes PUBLIC ${SUITESPARSEQR_LIBRARY})
-target_include_directories(stripes PUBLIC ${UMFPACK_INCLUDES})
-target_link_libraries(stripes PUBLIC ${UMFPACK_LIBRARIES})
+hunter_add_package(SuiteSparse)
+find_package(SuiteSparse CONFIG REQUIRED)
+target_link_libraries(stripes PUBLIC SuiteSparse::cholmod SuiteSparse::umfpack SuiteSparse::spqr)
 
 ################################################################################
 
