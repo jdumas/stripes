@@ -13,13 +13,14 @@
 #include "Complex.h"
 #include "Vector.h"
 #include "Types.h"
+#include <optional>
 
 namespace DDG
 {
    class Vertex
    {
       public:
-         HalfEdgeIter he;
+         std::optional<HalfEdgeIter> he;
          // points to the "outgoing" halfedge
 
          Vector position;

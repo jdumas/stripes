@@ -160,8 +160,6 @@ namespace DDG
       mesh.faces.reserve( size_t(nF) + size_t(nB) );
    }
 
-   extern vector<HalfEdge> isolated; // all isolated vertices point to isolated.begin()
-
    int MeshIO :: buildMesh( const MeshData& data, Mesh& mesh )
    {
       map< pair< int, int >, int > edgeCount;
@@ -178,7 +176,6 @@ namespace DDG
       {
          VertexIter newVertex = mesh.vertices.insert( mesh.vertices.end(), Vertex() );
          newVertex->position = data.positions[ i ];
-         newVertex->he = isolated.begin();
          indexToVertex[ (int) i ] = newVertex;
 
          if( i < nT )
@@ -347,7 +344,7 @@ namespace DDG
       // halfedge to the one on the boundary
       for( VertexIter v = mesh.vertices.begin(); v != mesh.vertices.end(); v++ )
       {
-         HalfEdgeIter h = v->he;
+         HalfEdgeIter h = *(v->he);
          do
          {
             if( h->onBoundary )

@@ -55,7 +55,7 @@ namespace DDG
          he->face   =     faceOldToNew[ he->face   ];
       }
 
-      for( VertexIter v = vertices.begin(); v != vertices.end(); v++ ) v->he = halfedgeOldToNew[ v->he ];
+      for( VertexIter v = vertices.begin(); v != vertices.end(); v++ ) v->he = halfedgeOldToNew[ *(v->he) ];
       for(   EdgeIter e =    edges.begin(); e !=    edges.end(); e++ ) e->he = halfedgeOldToNew[ e->he ];
       for(   FaceIter f =    faces.begin(); f !=    faces.end(); f++ ) f->he = halfedgeOldToNew[ f->he ];
 
@@ -186,14 +186,14 @@ namespace DDG
          // compute the cumulative angle at each outgoing
          // halfedge, relative to the initial halfedge
          double cumulativeAngle = 0.;
-         HalfEdgeIter he = v->he;
+         HalfEdgeIter he = *(v->he);
          do
          {
             he->angularCoordinate = cumulativeAngle;
             cumulativeAngle += he->next->angle();
             he = he->next->next->flip;
          }
-         while( he != v->he );
+         while( he != *(v->he) );
 
          // normalize angular coordinates so that they sum to two pi
          if( !v->onBoundary() )
@@ -344,7 +344,7 @@ namespace DDG
       while( !Q.empty() )
       {
          VertexIter vi = Q.front(); Q.pop();
-         HalfEdgeIter h = vi->he;
+         HalfEdgeIter h = *(vi->he);
          do
          {
             VertexIter vj = h->flip->vertex;

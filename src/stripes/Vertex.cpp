@@ -13,7 +13,7 @@ namespace DDG
    {
       Vector N;
 
-      HalfEdgeCIter h = he;
+      HalfEdgeCIter h = *he;
       do
       {
          if( !h->onBoundary )
@@ -32,7 +32,7 @@ namespace DDG
    {
       double A = 0.;
 
-      HalfEdgeCIter h = he;
+      HalfEdgeCIter h = *he;
       do
       {
          if( !h->onBoundary )
@@ -47,17 +47,15 @@ namespace DDG
       return A/3.;
    }
 
-   vector<HalfEdge> isolated; // all isolated vertices point to isolated.begin()
-
    bool Vertex::onBoundary( void ) const
    {
-      return he->onBoundary;
+      return (*he)->onBoundary;
    }
 
    bool Vertex::isIsolated( void ) const
    // returns true if the vertex is not contained in any face or edge; false otherwise
    {
-      return he == isolated.begin();
+       return he.has_value();
    }
 
    int Vertex :: valence( void ) const
@@ -65,7 +63,7 @@ namespace DDG
    {
       int n = 0;
 
-      HalfEdgeCIter h = he;
+      HalfEdgeCIter h = *he;
       do
       {
          n++;
@@ -80,7 +78,7 @@ namespace DDG
    {
       double sum = 0.;
 
-      HalfEdgeCIter h = he;
+      HalfEdgeCIter h = *he;
       do
       {
          sum += h->next->angle();
@@ -105,7 +103,7 @@ namespace DDG
 #else
       Vector p = position;
       Vector N = normal();
-      Vector X = he->flip->vertex->position - p;
+      Vector X = (*he)->flip->vertex->position - p;
       X -= dot(X,N)*N;
       X.normalize();
       Vector JX = cross( N, X );
@@ -130,7 +128,7 @@ namespace DDG
    {
       Complex X( 0., 0. );
 
-      HalfEdgeCIter h = he;
+      HalfEdgeCIter h = *he;
       do
       {
          double l = h->edge->length();
