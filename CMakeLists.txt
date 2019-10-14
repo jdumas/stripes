@@ -1,10 +1,11 @@
 ################################################################################
-cmake_minimum_required(VERSION 3.11)
+cmake_minimum_required(VERSION 3.15)
 
 include("cmake/HunterGate.cmake")
 HunterGate(
 	URL "https://github.com/cpp-pm/hunter/archive/v0.23.219.tar.gz"
 	SHA1 "9cf34f61c8d34cfc2b1396a63aaaedaa5e09441e"
+	LOCAL
 )
 
 ################################################################################
@@ -88,11 +89,17 @@ target_compile_definitions(stripes PUBLIC "-DDATA_FOLDER=\"${DATA_FOLDER}\"")
 # Dependencies
 if(WIN32)
 	# Force building SuiteSparse with /MT or /MTd
-	set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/cmake/vs-mt.cmake)
+	set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Hunter/toolchain-vs-mt.cmake)
 endif()
 hunter_add_package(SuiteSparse)
 find_package(SuiteSparse CONFIG REQUIRED)
 target_link_libraries(stripes PUBLIC SuiteSparse::cholmod SuiteSparse::umfpack SuiteSparse::spqr)
+
+if(STRIPES_TOPLEVEL_PROJECT)
+	# Dummy executable for debugging
+	add_executable(dummy src/main.cpp)
+	target_link_libraries(dummy PUBLIC stripes::stripes)
+endif()
 
 ################################################################################
 
