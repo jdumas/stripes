@@ -66,6 +66,8 @@ target_compile_features(stripes PUBLIC cxx_std_17)
 target_compile_definitions(stripes PUBLIC SP_COMPILE_COMMAND_LINE)
 target_link_libraries(stripes PRIVATE warnings::all)
 
+set_target_properties(stripes PROPERTIES POSITION_INDEPENDENT_CODE ON)
+
 if(WIN32)
 	target_compile_definitions(stripes PUBLIC _USE_MATH_DEFINES)
 endif()
