@@ -77,10 +77,21 @@ set(DATA_FOLDER "${CMAKE_CURRENT_SOURCE_DIR}/data/")
 target_compile_definitions(stripes PUBLIC "-DDATA_FOLDER=\"${DATA_FOLDER}\"")
 
 # Dependencies
-if(NOT (TARGET SuiteSparse::cholmod AND TARGET SuiteSparse::umfpack AND TARGET SuiteSparse::spqr))
+if(TARGET SuiteSparse::cholmod AND TARGET SuiteSparse::umfpack AND TARGET SuiteSparse::spqr)
+	target_link_libraries(stripes PUBLIC SuiteSparse::cholmod SuiteSparse::umfpack SuiteSparse::spqr)
+else()
+	if(DEFINED ENV{CONDA_PREFIX})
+		set(ENV{SUITESPARSE_ROOT} $ENV{CONDA_PREFIX})
+	endif()
 	find_package(SuiteSparse REQUIRED)
+	find_package(Umfpack REQUIRED)
+	target_include_directories(stripes PUBLIC ${CHOLMOD_INCLUDE_DIR})
+	target_link_libraries(stripes PUBLIC ${CHOLMOD_LIBRARY})
+	target_include_directories(stripes PUBLIC ${SUITESPARSEQR_INCLUDE_DIR})
+	target_link_libraries(stripes PUBLIC ${SUITESPARSEQR_LIBRARY})
+	target_include_directories(stripes PUBLIC ${UMFPACK_INCLUDES})
+	target_link_libraries(stripes PUBLIC ${UMFPACK_LIBRARIES})
 endif()
-target_link_libraries(stripes PUBLIC SuiteSparse::cholmod SuiteSparse::umfpack SuiteSparse::spqr)
 
 if(STRIPES_TOPLEVEL_PROJECT)
 	# Dummy executable for debugging
