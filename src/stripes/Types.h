@@ -25,7 +25,6 @@ namespace DDG
    class LinearContext;
    class LinearEquation;
    class LinearPolynomial;
-   class LinearSystem;
    class Mesh;
    class MeshIO;
    class Quaternion;
@@ -41,7 +40,7 @@ namespace DDG
 
    template <class T>
    class SparseMatrix;
-   
+
    // convenience types for iterators
    typedef std::map<Variable*,double>::iterator            TermIter;
    typedef std::map<Variable*,double>::const_iterator     TermCIter;

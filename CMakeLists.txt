@@ -36,8 +36,6 @@ add_library(stripes STATIC
 	src/stripes/LinearEquation.h
 	src/stripes/LinearPolynomial.cpp
 	src/stripes/LinearPolynomial.h
-	src/stripes/LinearSystem.cpp
-	src/stripes/LinearSystem.h
 	src/stripes/Mesh.cpp
 	src/stripes/Mesh.h
 	src/stripes/MeshIO.cpp
