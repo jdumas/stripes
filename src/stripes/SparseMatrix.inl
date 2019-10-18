@@ -4,9 +4,6 @@
 #include <cmath>
 #include <complex>
 
-#include <SuiteSparseQR.hpp>
-#include <umfpack.h>
-
 #include "Real.h"
 #include "Complex.h"
 #include "SparseMatrix.h"
@@ -478,36 +475,6 @@ namespace DDG
       {
          A( i, i ) += c;
       }
-   }
-
-   template <class T>
-   void solveSymmetric( SparseMatrix<T>& A,
-                        DenseMatrix<T>& x,
-                        DenseMatrix<T>& b )
-   // solves the sparse linear system Ax = b using sparse LU factorization
-   {
-#ifdef SP_DEBUG
-      int t0 = clock();
-#endif
-      cholmod_sparse* Ac = A.to_cholmod();
-      int n = Ac->nrow;
-      SuiteSparse_long* Ap = (SuiteSparse_long*) Ac->p;
-      SuiteSparse_long* Ai = (SuiteSparse_long*) Ac->i;
-      double*  Ax =  (double*) Ac->x;
-      void* Symbolic;
-      void* Numeric;
-
-      umfpack_dl_symbolic( n, n, Ap, Ai, Ax, &Symbolic, NULL, NULL );
-      umfpack_dl_numeric( Ap, Ai, Ax, Symbolic, &Numeric, NULL, NULL );
-      umfpack_dl_solve( UMFPACK_A, Ap, Ai, Ax, (double*) &x(0), (double*) &b(0), Numeric, NULL, NULL );
-      umfpack_dl_free_symbolic( &Symbolic );
-      umfpack_dl_free_numeric( &Numeric );
-
-#ifdef SP_DEBUG
-      int t1 = clock();
-      cout << "[lu] time: " << seconds( t0, t1 ) << "s" << "\n";
-      cout << "[lu] max residual: " << residual( A, x, b ) << "\n";
-#endif
    }
 
    template <class T>

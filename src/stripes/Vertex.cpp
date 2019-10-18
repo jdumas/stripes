@@ -55,7 +55,7 @@ namespace DDG
    bool Vertex::isIsolated( void ) const
    // returns true if the vertex is not contained in any face or edge; false otherwise
    {
-       return he.has_value();
+       return !he.has_value();
    }
 
    int Vertex :: valence( void ) const

@@ -187,18 +187,6 @@ namespace DDG
    };
 
    template <class T>
-   void solve( SparseMatrix<T>& A,
-                DenseMatrix<T>& x,
-                DenseMatrix<T>& b );
-   // solves the sparse linear system Ax = b using sparse QR factorization
-
-   template <class T>
-   void solveSymmetric( SparseMatrix<T>& A,
-                        DenseMatrix<T>& x,
-                        DenseMatrix<T>& b );
-   // solves the sparse linear system Ax = b using sparse LU factorization
-
-   template <class T>
    void solvePositiveDefinite( SparseMatrix<T>& A,
                                 DenseMatrix<T>& x,
                                 DenseMatrix<T>& b );
