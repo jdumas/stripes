@@ -38,7 +38,7 @@ Once the dependencies have been installed/built, the code can be built by simply
    build -j 4
    ```
 
-in the root directory.  The result will be an executable called `StripePatterns` (or `StripePatterns` on Windows).
+in the root directory.  The result will be an executable called `StripePatterns` (or `StripePatterns.exe` on Windows).
 
 
 Running
