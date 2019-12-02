@@ -15,8 +15,7 @@ namespace DDG {
 ///                                         is empty, then either the smoothest field or the
 ///                                         curvature field is used, based on the value of the input
 ///                                         flag `useSmoothestField`.
-/// @param[in]     theta                    Rotate input field (principal curvature) by given angle
-///                                         in radian.
+/// @param[in]     theta                    Rotate input field by a given angle (between 0 and 2*pi).
 /// @param[in]     frequency                Frequency of output stripes.
 /// @param[in]     numCoordinateFunctions   Number of parametrization to compute (D=1 or 2).
 /// @param[out]    branchIndex              #F x 1 branch index of each parametrization. A zero
@@ -25,8 +24,6 @@ namespace DDG {
 /// @param[out]    zeroIndex                #F x D zero index of each parametrization.
 /// @param[out]    isBorder                 #F x 1 array indicating if a face is on the border of
 ///                                         the mesh.
-/// @param[in]     normalizeProjectedField  If true, the input direction field is normalized after
-///                                         projection onto the surface.
 /// @param[in]     useSmoothestField        If no input direction field is provided, computes either
 ///                                         the smoothest field, or the field of principal
 ///                                         curvature, based on the value of this flag.
@@ -44,7 +41,6 @@ int computeStripePatterns(const Eigen::MatrixXd &V,
                           Eigen::MatrixXd &parameterization,
                           Eigen::MatrixXi &zeroIndex,
                           std::vector<bool> &isBorder,
-                          bool normalizeProjectedField = true,
                           bool useSmoothestField = false,
                           std::string *error = nullptr);
 
