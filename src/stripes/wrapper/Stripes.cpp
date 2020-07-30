@@ -4,12 +4,34 @@
 
 namespace DDG {
 
+////////////////////////////////////////////////////////////////////////////////
+
 namespace {
+
+///
+/// Project a vector onto a given plane.
+///
+/// @param[in]  vec     The vector to project onto the plane.
+/// @param[in]  normal  Normal to the plane to project onto.
+/// @param[in]  axis    Axis vector whose projection onto the plane defines the local X axis.
+///
+/// @return     Projected vector.
+///
+Eigen::Vector2d projectOntoPlane(const Eigen::Vector3d &vec,
+                                 const Eigen::Vector3d &normal,
+                                 const Eigen::Vector3d &axis)
+{
+    Eigen::Vector3d eY = normal.cross(axis).normalized();
+    Eigen::Vector3d eX = eY.cross(normal).normalized();
+    return {eX.dot(vec), eY.dot(vec)};
+}
+
+// -----------------------------------------------------------------------------
 
 class MeshEigen : public Mesh {
 public:
     int init(const Eigen::MatrixXd &V, const Eigen::MatrixXi &F);
-    void setDirectionField(bool useSmoothestField, double theta);
+    void setDirectionField(const Eigen::MatrixXd &D, bool useSmoothestField, double theta);
 };
 
 // Return 0 for success
@@ -37,16 +59,33 @@ int MeshEigen::init(const Eigen::MatrixXd &V, const Eigen::MatrixXi &F)
 
     return 0;
 }
-
-void MeshEigen::setDirectionField(bool useSmoothestField, double theta)
+void MeshEigen::setDirectionField(const Eigen::MatrixXd &D, bool useSmoothestField, double theta)
 {
-    if (useSmoothestField) {
-        computeSmoothestSection();
+    if ((size_t)D.rows() == vertices.size()) {
+        for (VertexIter v = vertices.begin(); v != vertices.end(); v++) {
+            double alpha = (*v->he)->angularCoordinate;
+            Complex r(cos(2. * alpha), sin(2. * alpha));
+
+            auto i = v->index;
+            auto n = v->normal();
+            auto e = (*v->he)->vector();
+            auto u = projectOntoPlane(D.row(i).transpose(), {n.x, n.y, n.z}, {e.x, e.y, e.z});
+            double a = std::atan2(u.y(), u.x()) + M_PI / 2.0;
+            v->directionField = r * Complex(cos(2.0 * a), sin(2.0 * a));
+        }
     }
     else {
-        computeCurvatureAlignedSection();
+        if (useSmoothestField) {
+            computeSmoothestSection();
+        }
+        else {
+            computeCurvatureAlignedSection();
+        }
     }
-    Complex z(cos(theta), sin(theta));
+
+    // rotate 1-vector field by θ radians, which in our complex representation
+    // is equivalent to rotating a 2-vector field by 2*θ radians
+    Complex z(cos(2.0 * theta), sin(2.0 * theta));
     for (VertexIter v = vertices.begin(); v != vertices.end(); v++) {
         v->directionField *= z;
     }
@@ -54,8 +93,11 @@ void MeshEigen::setDirectionField(bool useSmoothestField, double theta)
 
 }  // anonymous namespace
 
+////////////////////////////////////////////////////////////////////////////////
+
 int computeStripePatterns(const Eigen::MatrixXd &V,
                           Eigen::MatrixXi &F,
+                          const Eigen::MatrixXd &D,
                           double theta,
                           double frequency,
                           int numCoords,
@@ -77,14 +119,14 @@ int computeStripePatterns(const Eigen::MatrixXd &V,
     if (auto ret = mesh.init(V, F)) {
         return ret;
     }
-    mesh.setDirectionField(useSmoothestField, theta);
+    mesh.setDirectionField(D, useSmoothestField, theta);
     for (VertexIter v = mesh.vertices.begin(); v != mesh.vertices.end(); v++) {
         auto z = v->directionField;
         if (!(std::isfinite(z.re) && std::isfinite(z.im))) {
             if (error) {
                 *error =
                     "Direction field has NaN or infinite values. "
-                    "Make sure the input mesh is clean of isolated or non-manifold vertices.";
+                    "Make sure the input mesh is clean of isolated and non-manifold vertices.";
             }
             return -1;
         }
