@@ -115,6 +115,12 @@ endif()
 ################################################################################
 
 if(STRIPES_TOPLEVEL_PROJECT)
+	if(APPLE)
+		# Workaround bug in CMake FindGLUT?
+		# https://gitlab.kitware.com/cmake/cmake/-/issues/20184
+		list(INSERT CMAKE_FRAMEWORK_PATH 0 /System/Library/Frameworks)
+	endif()
+
 	find_package(OpenGL)
 	find_package(GLUT)
 	if(NOT (OPENGL_GLU_FOUND AND GLUT_FOUND))

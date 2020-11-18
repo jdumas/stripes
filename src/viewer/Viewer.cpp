@@ -57,17 +57,17 @@ namespace DDG
       int argc = 0;
       vector< vector<char> > argv(1);
 
-      if(gladLoadGL()) {
+      // initialize window
+      glutInit( &argc, (char**)&argv );
+      glutInitWindowSize( windowSize[0], windowSize[1] );
+      glutInitDisplayMode( GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH );
+      glutCreateWindow( "StripePatterns" );
+
+      if(!gladLoadGL()) {
          // you need an OpenGL context before loading glad
          printf("I did load GL with no context!\n");
          exit(-1);
       }
-
-      // initialize window
-      glutInitWindowSize( windowSize[0], windowSize[1] );
-      glutInitDisplayMode( GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH );
-      glutInit( &argc, (char**)&argv );
-      glutCreateWindow( "StripePatterns" );
 
       // specify callbacks
       glutDisplayFunc  ( Viewer::display  );
